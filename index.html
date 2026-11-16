@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="Auto loan calculator and a calculator for how much car you can afford.">
-<title>Drive Math</title>
+<meta name="description" content="Free auto loan calculator, plus a calculator for how much car you can afford.">
+<title>Auto Loan Calculator</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Inter:wght@400;500;600&display=swap">
 <style>
@@ -123,6 +123,19 @@ summary { cursor: pointer; font-weight: 600; color: var(--accent); }
 .verdict { border-radius: 10px; padding: 12px 14px; background: var(--soft); font-size: 14px; }
 .verdict.over { color: var(--warn); }
 .warnline { color: var(--warn); font-size: 13px; }
+.actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: 16px; }
+.btn-primary { font: inherit; font-weight: 600; border: 0; background: var(--accent); color: var(--accent-fg); border-radius: 8px; padding: 10px 20px; cursor: pointer; }
+.btn-primary:hover { filter: brightness(1.08); }
+a.linkbtn { display: inline-block; align-self: flex-start; text-decoration: none; margin-top: 6px; }
+.btn-ghost { font: inherit; font-weight: 600; border: 1px solid var(--line); background: transparent; color: var(--muted); border-radius: 8px; padding: 9px 14px; cursor: pointer; }
+.btn-ghost:hover { color: var(--fg); border-color: var(--muted); }
+.status { font-size: 13px; color: var(--accent); font-weight: 600; min-height: 1em; }
+/* Ad spaces: fixed heights reserve room so the page does not jump when ads load.
+   To hide them all for now, add display: none to .ad. */
+.ad { display: flex; align-items: center; justify-content: center; width: 100%; min-height: 90px; border: 1px dashed var(--line); border-radius: 10px; color: var(--muted); font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; overflow: hidden; }
+.ad-top { margin-bottom: 20px; }
+.ad-mid { min-height: 250px; }
+.ad-bottom { margin-top: 24px; }
 footer { margin-top: 28px; font-size: 12.5px; color: var(--muted); max-width: 80ch; }
 [hidden] { display: none !important; }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
@@ -132,14 +145,18 @@ footer { margin-top: 28px; font-size: 12.5px; color: var(--muted); max-width: 80
 <body>
 <div class="wrap">
   <header>
-    <h1>Drive Math</h1>
+    <h1>Auto Loan Calculator</h1>
     <p>Work out the monthly payment on a car loan, then check how much car your income can carry.</p>
+    <a class="btn-primary linkbtn" href="tax-return.html">2026 Tax Return Estimate &rarr;</a>
   </header>
 
   <div class="tabs" role="tablist" aria-label="Calculators">
     <button role="tab" id="tab-loan" aria-selected="true" aria-controls="view-loan" type="button">Auto loan calculator</button>
     <button role="tab" id="tab-afford" aria-selected="false" aria-controls="view-afford" type="button">How much car can I afford</button>
   </div>
+
+  <!-- AD SPACE: top banner. Paste your ad code inside this div. -->
+  <div class="ad ad-top" id="ad-top" aria-label="Advertisement">Ad space</div>
 
   <!-- AUTO LOAN -->
   <section id="view-loan" role="tabpanel" aria-labelledby="tab-loan">
@@ -161,6 +178,11 @@ footer { margin-top: 28px; font-size: 12.5px; color: var(--muted); max-width: 80
           <div class="sub">Optional</div>
           <div class="field full"><label for="extra">Extra payment each month</label><div class="inp"><span>$</span><input id="extra" type="number" inputmode="decimal" min="0" step="25" value="0"></div></div>
         </div>
+        <div class="actions">
+          <button class="btn-primary" id="run-loan" type="button">Calculate</button>
+          <button class="btn-ghost" id="reset-loan" type="button">Reset to examples</button>
+          <span class="status" id="status-loan" role="status" aria-live="polite"></span>
+        </div>
         <p class="hint">Starting numbers are examples. Replace them with your quote. Sales tax is applied to the vehicle price, and some states tax only the amount above your trade-in.</p>
       </div>
 
@@ -177,6 +199,8 @@ footer { margin-top: 28px; font-size: 12.5px; color: var(--muted); max-width: 80
           <div class="stat"><div class="k">Paid off by</div><div class="v" id="l-date">-</div></div>
         </div>
         <div class="saving" id="l-saving" hidden></div>
+        <!-- AD SPACE: middle of the loan results. Paste your ad code inside this div. -->
+        <div class="ad ad-mid" id="ad-mid-loan" aria-label="Advertisement">Ad space</div>
         <div class="panel">
           <h2>Balance and interest over the loan</h2>
           <div class="chart-wrap"><svg class="chart" id="l-chart" viewBox="0 0 640 240" role="img" aria-label="Remaining loan balance and cumulative interest by month"></svg></div>
@@ -214,11 +238,18 @@ footer { margin-top: 28px; font-size: 12.5px; color: var(--muted); max-width: 80
               <option value="72">72 months</option><option value="84">84 months</option>
             </select></div>
         </div>
+        <div class="actions">
+          <button class="btn-primary" id="run-afford" type="button">Calculate</button>
+          <button class="btn-ghost" id="reset-afford" type="button">Reset to examples</button>
+          <span class="status" id="status-afford" role="status" aria-live="polite"></span>
+        </div>
         <p class="hint">Starting numbers are examples. Fees are left out of these estimates.</p>
       </div>
 
       <div class="results">
         <div class="cards" id="a-cards"></div>
+        <!-- AD SPACE: middle of the affordability results. Paste your ad code inside this div. -->
+        <div class="ad ad-mid" id="ad-mid-afford" aria-label="Advertisement">Ad space</div>
         <div class="panel">
           <h2>Check a specific car</h2>
           <div class="fields">
@@ -233,6 +264,9 @@ footer { margin-top: 28px; font-size: 12.5px; color: var(--muted); max-width: 80
       </div>
     </div>
   </section>
+
+  <!-- AD SPACE: bottom banner. Paste your ad code inside this div. -->
+  <div class="ad ad-bottom" id="ad-bottom" aria-label="Advertisement">Ad space</div>
 
   <footer>Estimates only. Your lender sets the real rate, fees and terms, and a quote can differ from these figures. Payments assume a fixed rate with monthly compounding.</footer>
 </div>
@@ -447,6 +481,25 @@ footer { margin-top: 28px; font-size: 12.5px; color: var(--muted); max-width: 80
 
   ['price', 'down', 'trade', 'tax', 'fees', 'apr', 'term', 'extra'].forEach(function (id) { $(id).addEventListener('input', renderLoan); });
   ['a-income', 'a-debts', 'a-ins', 'a-fuel', 'a-maint', 'a-down', 'a-trade', 'a-apr', 'a-tax', 'a-term', 'a-check'].forEach(function (id) { $(id).addEventListener('input', renderAfford); });
+
+  var loanIds = ['price', 'down', 'trade', 'tax', 'fees', 'apr', 'term', 'extra'];
+  var affIds = ['a-income', 'a-debts', 'a-ins', 'a-fuel', 'a-maint', 'a-down', 'a-trade', 'a-apr', 'a-tax', 'a-term', 'a-check'];
+  var defaults = {};
+  loanIds.concat(affIds).forEach(function (id) { defaults[id] = $(id).value; });
+  function flash(id) {
+    var s = $(id);
+    s.textContent = 'Updated';
+    clearTimeout(s._t);
+    s._t = setTimeout(function () { s.textContent = ''; }, 2000);
+  }
+  function runLoan() { renderLoan(); flash('status-loan'); }
+  function runAfford() { renderAfford(); flash('status-afford'); }
+  $('run-loan').addEventListener('click', runLoan);
+  $('run-afford').addEventListener('click', runAfford);
+  $('reset-loan').addEventListener('click', function () { loanIds.forEach(function (id) { $(id).value = defaults[id]; }); runLoan(); });
+  $('reset-afford').addEventListener('click', function () { affIds.forEach(function (id) { $(id).value = defaults[id]; }); runAfford(); });
+  loanIds.forEach(function (id) { $(id).addEventListener('keydown', function (e) { if (e.key === 'Enter') runLoan(); }); });
+  affIds.forEach(function (id) { $(id).addEventListener('keydown', function (e) { if (e.key === 'Enter') runAfford(); }); });
 
   renderLoan();
   renderAfford();

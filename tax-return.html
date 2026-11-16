@@ -1,0 +1,356 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Estimate your 2026 US federal tax refund or balance due with the 2026 brackets and standard deductions.">
+<title>2026 Tax Return Estimate</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Inter:wght@400;500;600&display=swap">
+<style>
+/* Layout: header with back button, inputs | results two-up (stacks on phones). Same look as the loan calculator. */
+:root {
+  --bg: #f1f4f6;
+  --surface: #ffffff;
+  --fg: #14202b;
+  --muted: #566878;
+  --line: #d8e0e6;
+  --accent: #0b6b63;
+  --accent-fg: #ffffff;
+  --soft: #e1f0ee;
+  --hi: #a8520a;
+  --warn: #9a3412;
+  --font-display: "Bricolage Grotesque", "Helvetica Neue", Arial, sans-serif;
+  --font-body: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  color-scheme: light dark;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0e151b;
+    --surface: #161f27;
+    --fg: #e8eef3;
+    --muted: #94a5b4;
+    --line: #26333f;
+    --accent: #3fc1b2;
+    --accent-fg: #05201d;
+    --soft: #13302e;
+    --hi: #f0a24a;
+    --warn: #f59e6b;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0e151b;
+  --surface: #161f27;
+  --fg: #e8eef3;
+  --muted: #94a5b4;
+  --line: #26333f;
+  --accent: #3fc1b2;
+  --accent-fg: #05201d;
+  --soft: #13302e;
+  --hi: #f0a24a;
+  --warn: #f59e6b;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.5;
+  padding-block: 28px 56px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.wrap { max-width: 1060px; margin: 0 auto; }
+header { display: flex; flex-direction: column; gap: 8px; margin-bottom: 22px; align-items: flex-start; }
+h1 { font-family: var(--font-display); font-weight: 700; font-size: clamp(28px, 5vw, 40px); line-height: 1.05; margin: 0; letter-spacing: -0.02em; text-wrap: balance; }
+header p { margin: 0; color: var(--muted); max-width: 62ch; }
+a.back { text-decoration: none; display: inline-block; font-size: 13.5px; }
+button:focus-visible, input:focus-visible, select:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.grid { display: grid; grid-template-columns: minmax(0, 380px) minmax(0, 1fr); gap: 20px; align-items: start; }
+@media (max-width: 800px) { .grid { grid-template-columns: minmax(0, 1fr); } }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 20px; min-width: 0; }
+.panel h2 { font-family: var(--font-display); font-size: 17px; margin: 0 0 14px; letter-spacing: -0.01em; }
+.fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.field { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.field.full { grid-column: 1 / -1; }
+label { font-size: 12.5px; font-weight: 600; color: var(--muted); }
+.inp { display: flex; align-items: center; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); padding: 0 10px; }
+.inp:focus-within { border-color: var(--accent); }
+.inp span { color: var(--muted); font-size: 14px; }
+input, select { font: inherit; color: var(--fg); background: transparent; border: 0; width: 100%; min-width: 0; padding: 9px 4px; font-variant-numeric: tabular-nums; }
+select { background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 9px 10px; }
+input:focus, select:focus { outline: none; }
+select:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.sub { grid-column: 1 / -1; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); margin-top: 6px; padding-top: 12px; border-top: 1px solid var(--line); }
+.help { font-size: 12px; color: var(--muted); margin: 2px 0 0; }
+.hint { font-size: 12px; color: var(--muted); margin: 14px 0 0; }
+.actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: 16px; }
+.btn-primary { font: inherit; font-weight: 600; border: 0; background: var(--accent); color: var(--accent-fg); border-radius: 8px; padding: 10px 20px; cursor: pointer; }
+.btn-primary:hover { filter: brightness(1.08); }
+.btn-ghost { font: inherit; font-weight: 600; border: 1px solid var(--line); background: transparent; color: var(--muted); border-radius: 8px; padding: 9px 14px; cursor: pointer; }
+.btn-ghost:hover { color: var(--fg); border-color: var(--muted); }
+a.btn-ghost { text-decoration: none; }
+.status { font-size: 13px; color: var(--accent); font-weight: 600; min-height: 1em; }
+.results { display: flex; flex-direction: column; gap: 20px; min-width: 0; }
+.hero { background: var(--accent); color: var(--accent-fg); border-radius: 12px; padding: 22px; display: flex; flex-direction: column; gap: 4px; }
+.hero.owe { background: var(--hi); }
+.hero .lbl { font-size: 13px; font-weight: 600; opacity: 0.9; }
+.hero .big { font-family: var(--font-display); font-weight: 700; font-size: clamp(40px, 8vw, 60px); line-height: 1; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; }
+.hero .note { font-size: 13px; opacity: 0.92; }
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; }
+.stat { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 14px; min-width: 0; }
+.stat .k { font-size: 12px; color: var(--muted); font-weight: 600; }
+.stat .v { font-family: var(--font-display); font-size: 22px; font-weight: 700; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+.tbl { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; font-variant-numeric: tabular-nums; font-size: 14px; }
+th, td { text-align: right; padding: 8px 10px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+th:first-child, td:first-child { text-align: left; }
+th { font-size: 12px; color: var(--muted); font-weight: 600; }
+tr.total td { font-weight: 700; border-top: 2px solid var(--line); }
+.notes { margin: 0; padding-left: 18px; color: var(--muted); font-size: 13.5px; }
+.notes li { margin-bottom: 4px; }
+/* Ad spaces: fixed heights reserve room so the page does not jump when ads load.
+   To hide them all for now, add display: none to .ad. */
+.ad { display: flex; align-items: center; justify-content: center; width: 100%; min-height: 90px; border: 1px dashed var(--line); border-radius: 10px; color: var(--muted); font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; overflow: hidden; }
+.ad-top { margin-bottom: 20px; }
+.ad-mid { min-height: 250px; }
+.ad-bottom { margin-top: 24px; }
+footer { margin-top: 28px; font-size: 12.5px; color: var(--muted); max-width: 80ch; }
+footer a { color: var(--accent); }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <a class="btn-ghost back" href="index.html">&larr; Auto Loan Calculator</a>
+    <h1>2026 Tax Return Estimate</h1>
+    <p>Estimate your US federal refund or balance due for tax year 2026, the return you file in early 2027.</p>
+  </header>
+
+  <!-- AD SPACE: top banner. Paste your ad code inside this div. -->
+  <div class="ad ad-top" id="ad-top" aria-label="Advertisement">Ad space</div>
+
+  <div class="grid">
+    <div class="panel">
+      <h2>Your 2026 numbers</h2>
+      <div class="fields">
+        <div class="field full"><label for="status">Filing status</label>
+          <select id="status">
+            <option value="single">Single</option>
+            <option value="mfj" selected>Married filing jointly</option>
+            <option value="hoh">Head of household</option>
+          </select></div>
+
+        <div class="sub">Income</div>
+        <div class="field full"><label for="wages">Wages from W-2s (box 1)</label><div class="inp"><span>$</span><input id="wages" type="number" inputmode="decimal" min="0" step="500" value="120000"></div></div>
+        <div class="field"><label for="other">Other income</label><div class="inp"><span>$</span><input id="other" type="number" inputmode="decimal" min="0" step="100" value="0"></div></div>
+        <div class="field"><label for="gains">Long-term gains and qualified dividends</label><div class="inp"><span>$</span><input id="gains" type="number" inputmode="decimal" min="0" step="100" value="0"></div></div>
+        <div class="field full"><label for="adj">Adjustments to income</label><div class="inp"><span>$</span><input id="adj" type="number" inputmode="decimal" min="0" step="100" value="0"></div>
+          <p class="help">Traditional IRA, student loan interest, HSA contributions made outside payroll.</p></div>
+
+        <div class="sub">Deductions</div>
+        <div class="field full"><label for="itemized">Itemized deductions total</label><div class="inp"><span>$</span><input id="itemized" type="number" inputmode="decimal" min="0" step="100" value="0"></div>
+          <p class="help">Leave at 0 to use the standard deduction. The larger one is used.</p></div>
+        <div class="field full"><label for="extra">Other deductions</label><div class="inp"><span>$</span><input id="extra" type="number" inputmode="decimal" min="0" step="100" value="0"></div>
+          <p class="help">Amounts you have already worked out for new deductions such as age 65 and over, tips or overtime. They are taken off in addition to the deduction above.</p></div>
+
+        <div class="sub">Credits</div>
+        <div class="field"><label for="kids">Children under 17</label><div class="inp"><input id="kids" type="number" inputmode="numeric" min="0" step="1" value="2"></div></div>
+        <div class="field"><label for="odeps">Other dependents</label><div class="inp"><input id="odeps" type="number" inputmode="numeric" min="0" step="1" value="0"></div></div>
+        <div class="field full"><label for="othercr">Other credits</label><div class="inp"><span>$</span><input id="othercr" type="number" inputmode="decimal" min="0" step="50" value="0"></div>
+          <p class="help">Credits you have already figured out that reduce tax, such as education credits.</p></div>
+
+        <div class="sub">Tax already paid</div>
+        <div class="field"><label for="withheld">Federal tax withheld</label><div class="inp"><span>$</span><input id="withheld" type="number" inputmode="decimal" min="0" step="100" value="11000"></div></div>
+        <div class="field"><label for="est">Estimated payments</label><div class="inp"><span>$</span><input id="est" type="number" inputmode="decimal" min="0" step="100" value="0"></div></div>
+      </div>
+      <div class="actions">
+        <button class="btn-primary" id="run" type="button">Calculate</button>
+        <button class="btn-ghost" id="reset" type="button">Reset to examples</button>
+        <span class="status" id="status-msg" role="status" aria-live="polite"></span>
+      </div>
+      <p class="hint">Starting numbers are examples. Replace them with figures from your pay stubs and records.</p>
+    </div>
+
+    <div class="results">
+      <div class="hero" id="hero">
+        <div class="lbl" id="r-label">Estimated refund</div>
+        <div class="big" id="r-net">$0</div>
+        <div class="note" id="r-note"></div>
+      </div>
+      <div class="stats">
+        <div class="stat"><div class="k">Taxable income</div><div class="v" id="s-taxable">$0</div></div>
+        <div class="stat"><div class="k">Total tax</div><div class="v" id="s-tax">$0</div></div>
+        <div class="stat"><div class="k">Effective rate</div><div class="v" id="s-eff">0%</div></div>
+        <div class="stat"><div class="k">Top bracket</div><div class="v" id="s-marg">0%</div></div>
+      </div>
+
+      <!-- AD SPACE: middle of the results. Paste your ad code inside this div. -->
+      <div class="ad ad-mid" id="ad-mid" aria-label="Advertisement">Ad space</div>
+
+      <div class="panel">
+        <h2>How your return adds up</h2>
+        <div class="tbl"><table id="t-lines"></table></div>
+      </div>
+      <div class="panel">
+        <h2>Where your income is taxed</h2>
+        <div class="tbl"><table id="t-brackets"></table></div>
+      </div>
+      <div class="panel">
+        <h2>What this estimate leaves out</h2>
+        <ul class="notes">
+          <li>Self-employment tax and business income.</li>
+          <li>The earned income credit, education credits and other credits you have not entered yourself.</li>
+          <li>Alternative minimum tax and the net investment income tax.</li>
+          <li>State and local income tax.</li>
+          <li>Phase-outs for the deductions you enter under Other deductions. Work those out first.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- AD SPACE: bottom banner. Paste your ad code inside this div. -->
+  <div class="ad ad-bottom" id="ad-bottom" aria-label="Advertisement">Ad space</div>
+
+  <footer>
+    Estimate only, not tax advice. Brackets, standard deductions and capital gains thresholds are the 2026 amounts from the IRS
+    (<a href="https://www.irs.gov/newsroom/irs-releases-tax-inflation-adjustments-for-tax-year-2026-including-amendments-from-the-one-big-beautiful-bill" target="_blank" rel="noopener">Revenue Procedure 2025-32</a>).
+    The child tax credit is $2,200 per child, with up to $1,700 of it refundable. Your actual return can differ.
+  </footer>
+</div>
+
+<script>
+(function () {
+  var $ = function (id) { return document.getElementById(id); };
+  var num = function (id) { var v = parseFloat($(id).value); return isFinite(v) && v > 0 ? v : 0; };
+  var usd0 = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
+  var money = function (n) { return usd0.format(Math.round(n)); };
+  var pct = function (n) { return (Math.round(n * 1000) / 10) + '%'; };
+
+  var RATES = [0.10, 0.12, 0.22, 0.24, 0.32, 0.35, 0.37];
+  var DATA = {
+    single: { std: 16100, top: [12400, 50400, 105700, 201775, 256225, 640600, Infinity], g0: 49450, g15: 545500, ctcThr: 200000 },
+    mfj:    { std: 32200, top: [24800, 100800, 211400, 403550, 512450, 768700, Infinity], g0: 98900, g15: 613700, ctcThr: 400000 },
+    hoh:    { std: 24150, top: [17700, 67450, 105700, 201750, 256200, 640600, Infinity], g0: 66200, g15: 579600, ctcThr: 200000 }
+  };
+
+  function compute() {
+    var st = DATA[$('status').value];
+    var wages = num('wages'), other = num('other'), gains = num('gains'), adj = num('adj');
+    var itemized = num('itemized'), extra = num('extra');
+    var kids = Math.floor(num('kids')), odeps = Math.floor(num('odeps')), otherCr = num('othercr');
+    var withheld = num('withheld'), est = num('est');
+
+    var totalIncome = wages + other + gains;
+    var agi = Math.max(0, totalIncome - adj);
+    var useItemized = itemized > st.std;
+    var ded = useItemized ? itemized : st.std;
+    var taxable = Math.max(0, agi - ded - extra);
+    var gp = Math.min(gains, taxable);
+    var ord = taxable - gp;
+
+    var parts = [], ordTax = 0, prev = 0, marg = 0;
+    for (var i = 0; i < 7; i++) {
+      var top = st.top[i];
+      var amt = Math.max(0, Math.min(ord, top) - prev);
+      if (amt > 0) {
+        parts.push({ rate: RATES[i], from: prev, to: top, amt: amt, tax: amt * RATES[i] });
+        ordTax += amt * RATES[i];
+        marg = RATES[i];
+      }
+      prev = top;
+    }
+
+    var gTax = 0, a15 = 0, a20 = 0;
+    if (gp > 0) {
+      a15 = Math.max(0, Math.min(taxable, st.g15) - Math.max(ord, st.g0));
+      a20 = Math.max(0, taxable - Math.max(ord, st.g15));
+      gTax = a15 * 0.15 + a20 * 0.20;
+    }
+    var taxBefore = ordTax + gTax;
+
+    var reduce = agi > st.ctcThr ? 50 * Math.ceil((agi - st.ctcThr) / 1000) : 0;
+    var ctc = Math.max(0, 2200 * kids + 500 * odeps - reduce);
+    var rem = taxBefore;
+    var usedOther = Math.min(otherCr, rem); rem -= usedOther;
+    var usedCtc = Math.min(ctc, rem); rem -= usedCtc;
+    var unused = ctc - usedCtc;
+    var actc = Math.max(0, Math.min(unused, 1700 * kids, 0.15 * Math.max(0, wages - 2500)));
+    var totalTax = rem;
+    var payments = withheld + est;
+    var net = payments + actc - totalTax;
+
+    return { st: st, wages: wages, totalIncome: totalIncome, adj: adj, agi: agi, useItemized: useItemized, ded: ded, extra: extra,
+             taxable: taxable, gp: gp, parts: parts, ordTax: ordTax, gTax: gTax, a15: a15, a20: a20, taxBefore: taxBefore,
+             creditsUsed: usedOther + usedCtc, actc: actc, totalTax: totalTax, payments: payments, net: net, marg: marg, ctc: ctc, kids: kids };
+  }
+
+  function render() {
+    var r = compute();
+    var refund = r.net >= 0;
+    $('hero').className = 'hero' + (refund ? '' : ' owe');
+    $('r-label').textContent = refund ? 'Estimated refund' : 'Estimated amount you owe';
+    $('r-net').textContent = money(Math.abs(r.net));
+    $('r-note').textContent = 'Total tax of ' + money(r.totalTax) + ' against ' + money(r.payments + r.actc) + ' paid in or refundable.';
+    $('s-taxable').textContent = money(r.taxable);
+    $('s-tax').textContent = money(r.totalTax);
+    $('s-eff').textContent = r.totalIncome > 0 ? pct(r.totalTax / r.totalIncome) : '0%';
+    $('s-marg').textContent = pct(r.marg);
+
+    var rows = [
+      ['Total income', money(r.totalIncome)],
+      ['Adjustments to income', r.adj > 0 ? '-' + money(r.adj) : '$0'],
+      ['Adjusted gross income', money(r.agi), true],
+      [r.useItemized ? 'Itemized deductions' : 'Standard deduction', '-' + money(r.ded)],
+      ['Other deductions', r.extra > 0 ? '-' + money(r.extra) : '$0'],
+      ['Taxable income', money(r.taxable), true],
+      ['Tax before credits', money(r.taxBefore)],
+      ['Credits applied', r.creditsUsed > 0 ? '-' + money(r.creditsUsed) : '$0'],
+      ['Total tax', money(r.totalTax), true],
+      ['Tax withheld and paid', money(r.payments)],
+      ['Refundable child tax credit', money(r.actc)],
+      [refund ? 'Estimated refund' : 'Estimated amount you owe', money(Math.abs(r.net)), true]
+    ];
+    var h = '<tr><th>Line</th><th>Amount</th></tr>';
+    rows.forEach(function (x) { h += '<tr' + (x[2] ? ' class="total"' : '') + '><td>' + x[0] + '</td><td>' + x[1] + '</td></tr>'; });
+    $('t-lines').innerHTML = h;
+
+    var b = '<tr><th>Rate</th><th>Income range</th><th>Income taxed</th><th>Tax</th></tr>';
+    if (r.parts.length === 0 && r.gp === 0) {
+      b += '<tr><td colspan="4" style="text-align:left">No taxable income with these numbers.</td></tr>';
+    }
+    r.parts.forEach(function (p) {
+      var range = p.to === Infinity ? money(p.from) + ' and up' : money(p.from) + ' to ' + money(p.to);
+      b += '<tr><td>' + pct(p.rate) + '</td><td>' + range + '</td><td>' + money(p.amt) + '</td><td>' + money(p.tax) + '</td></tr>';
+    });
+    if (r.gp > 0) {
+      b += '<tr><td>0% / 15% / 20%</td><td>Long-term gains</td><td>' + money(r.gp) + '</td><td>' + money(r.gTax) + '</td></tr>';
+    }
+    $('t-brackets').innerHTML = b;
+  }
+
+  var ids = ['status', 'wages', 'other', 'gains', 'adj', 'itemized', 'extra', 'kids', 'odeps', 'othercr', 'withheld', 'est'];
+  var defaults = {};
+  ids.forEach(function (id) { defaults[id] = $(id).value; });
+  function flash() {
+    var s = $('status-msg');
+    s.textContent = 'Updated';
+    clearTimeout(s._t);
+    s._t = setTimeout(function () { s.textContent = ''; }, 2000);
+  }
+  function run() { render(); flash(); }
+  ids.forEach(function (id) {
+    $(id).addEventListener('input', render);
+    $(id).addEventListener('change', render);
+    $(id).addEventListener('keydown', function (e) { if (e.key === 'Enter') run(); });
+  });
+  $('run').addEventListener('click', run);
+  $('reset').addEventListener('click', function () { ids.forEach(function (id) { $(id).value = defaults[id]; }); run(); });
+  render();
+})();
+</script>
+</body>
+</html>
