@@ -23,14 +23,16 @@ jobs:
           EBAY_CLIENT_SECRET: ${{ secrets.EBAY_CLIENT_SECRET }}
           EBAY_CAMPAIGN_ID: ${{ secrets.EBAY_CAMPAIGN_ID }}
         run: python fetch_listings.py
+      - name: Build landing pages
+        run: python build_pages.py
       - name: Save the new data
         run: |
-          if [ -n "$(git status --porcelain listings.json)" ]; then
+          git add -A listings.json geo_cache.json browse sitemap.xml index.html 2>/dev/null || git add listings.json
+          if git diff --cached --quiet; then
+            echo "No changes to save."
+          else
             git config user.name "listings-bot"
             git config user.email "listings-bot@users.noreply.github.com"
-            git add listings.json
-            git commit -m "Update vehicle listings"
+            git commit -m "Update vehicle listings and pages"
             git push
-          else
-            echo "No changes to save."
           fi
