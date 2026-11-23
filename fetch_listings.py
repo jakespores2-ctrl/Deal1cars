@@ -82,28 +82,33 @@ def is_vehicle(name, desc=""):
     return bool(re.search(r"\bVIN\b|\bODOMETER\b|\bMILEAGE\b", d) or MAKE_RE.search(d))
 
 
+def lower_keys(d):
+    return {str(k).lower(): v for k, v in d.items()} if isinstance(d, dict) else {}
+
+
 def transform_gsa(results, today):
     out, seen = [], set()
     for r in results or []:
-        name = (r.get("ItemName") or "").strip()
-        lots = r.get("LotInfo") or []
-        desc = (lots[0].get("LotDescript") or "").strip() if lots and isinstance(lots[0], dict) else ""
+        r = lower_keys(r)
+        name = (r.get("itemname") or "").strip()
+        lots = r.get("lotinfo") or []
+        desc = (lower_keys(lots[0]).get("lotdescript") or "").strip() if lots and isinstance(lots[0], dict) else ""
         if not is_vehicle(name, desc):
             continue
-        end = (r.get("AucEndDt") or "").strip()[:10]
+        end = (r.get("aucenddt") or "").strip()[:10]
         if end and end < today.isoformat():
             continue
-        key = "%s-%s" % (r.get("SaleNo"), r.get("LotNo"))
+        key = "%s-%s" % (r.get("saleno"), r.get("lotno"))
         if key in seen:
             continue
         seen.add(key)
-        city = (r.get("PropertyCity") or r.get("LocationCity") or "").strip()
-        state = (r.get("PropertyState") or r.get("LocationST") or "").strip().upper()
-        bid = to_number(r.get("HighBidAmount"))
-        url = (r.get("ItemDescURL") or "").strip()
+        city = (r.get("propertycity") or r.get("locationcity") or "").strip()
+        state = (r.get("propertystate") or r.get("locationst") or "").strip().upper()
+        bid = to_number(r.get("highbidamount"))
+        url = (r.get("itemdescurl") or "").strip()
         if not url.lower().startswith("http"):
             url = "https://gsaauctions.gov/"
-        image = (r.get("ImageURL") or "").strip()
+        image = (r.get("imageurl") or "").strip()
         if image and not image.lower().startswith("http"):
             image = ""
         year = YEAR_RE.search(name)
@@ -113,7 +118,7 @@ def transform_gsa(results, today):
             "title": nice_title(name),
             "year": int(year.group(1)) if year else None,
             "price": bid if bid and bid > 0 else None,
-            "bids": int(to_number(r.get("BiddersCount")) or 0),
+            "bids": int(to_number(r.get("bidderscount")) or 0),
             "endDate": end or None,
             "endAt": None,
             "city": nice_title(city) if city else "",
@@ -121,8 +126,8 @@ def transform_gsa(results, today):
             "image": image,
             "url": url,
             "desc": desc[:160],
-            "seller": (r.get("AgencyName") or "").strip(),
-            "status": (r.get("AuctionStatus") or "").strip() or "S",
+            "seller": (r.get("agencyname") or "").strip(),
+            "status": (r.get("auctionstatus") or "").strip() or "S",
         })
     return out[:MAX_PER_SOURCE]
 
@@ -171,13 +176,13 @@ def transform_ebay(resp):
 
 def fetch_gsa(api_key):
     resp = http_json(GSA_URL, {"X-API-KEY": api_key, "Accept": "application/json"})
-    results = resp.get("results") if isinstance(resp, dict) else resp
+    results = resp if isinstance(resp, list) else (lower_keys(resp).get("results") or [])
     results = results or []
     log("GSA API returned %d auction lots in total." % len(results))
     if not results:
         log("Raw response (first 300 chars): %s" % json.dumps(resp)[:300])
     for r in results[:15]:
-        log("  sample: %r | end %r | status %r" % ((r.get("ItemName") or "")[:60], r.get("AucEndDt"), r.get("AuctionStatus")))
+        log("  sample: %r | end %r | status %r" % ((r.get("itemname") or "")[:60], r.get("aucenddt"), r.get("auctionstatus")))
     return transform_gsa(results, datetime.datetime.now(datetime.timezone.utc).date())
 
 
