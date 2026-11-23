@@ -1,0 +1,540 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="favicon.ico" sizes="48x48">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="description" content="Free online scientific calculator with trig, logs, powers, roots, factorials, degrees and radians, and a calculation history.">
+<title>Scientific Calculator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Inter:wght@400;500;600&display=swap">
+<style>
+/* Layout: calculator on the left, history and ad space on the right, stacking on phones. Same look as the other pages. */
+:root {
+  --bg: #f1f4f6;
+  --surface: #ffffff;
+  --fg: #14202b;
+  --muted: #566878;
+  --line: #d8e0e6;
+  --accent: #0b6b63;
+  --accent-fg: #ffffff;
+  --soft: #e1f0ee;
+  --hi: #a8520a;
+  --warn: #9a3412;
+  --font-display: "Bricolage Grotesque", "Helvetica Neue", Arial, sans-serif;
+  --font-body: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  color-scheme: light dark;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0e151b;
+    --surface: #161f27;
+    --fg: #e8eef3;
+    --muted: #94a5b4;
+    --line: #26333f;
+    --accent: #3fc1b2;
+    --accent-fg: #05201d;
+    --soft: #13302e;
+    --hi: #f0a24a;
+    --warn: #f59e6b;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0e151b;
+  --surface: #161f27;
+  --fg: #e8eef3;
+  --muted: #94a5b4;
+  --line: #26333f;
+  --accent: #3fc1b2;
+  --accent-fg: #05201d;
+  --soft: #13302e;
+  --hi: #f0a24a;
+  --warn: #f59e6b;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.5;
+  padding-block: 28px 56px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.wrap { max-width: 1060px; margin: 0 auto; }
+header { display: flex; flex-direction: column; gap: 8px; margin-bottom: 22px; align-items: flex-start; }
+h1 { font-family: var(--font-display); font-weight: 700; font-size: clamp(28px, 5vw, 40px); line-height: 1.05; margin: 0; letter-spacing: -0.02em; text-wrap: balance; }
+header p { margin: 0; color: var(--muted); max-width: 62ch; }
+a.back { text-decoration: none; display: inline-block; font-size: 13.5px; }
+button:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.grid { display: grid; grid-template-columns: minmax(0, 470px) minmax(0, 1fr); gap: 20px; align-items: start; }
+@media (max-width: 860px) { .grid { grid-template-columns: minmax(0, 1fr); } }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 20px; min-width: 0; }
+.panel h2 { font-family: var(--font-display); font-size: 17px; margin: 0 0 14px; letter-spacing: -0.01em; }
+.side { display: flex; flex-direction: column; gap: 20px; min-width: 0; }
+
+.display { background: var(--bg); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; margin-bottom: 14px; }
+.dtop { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 6px; }
+.dtop .right { display: flex; align-items: center; gap: 10px; }
+.mode { font: inherit; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; border: 1px solid var(--line); background: var(--surface); color: var(--accent); border-radius: 999px; padding: 3px 12px; cursor: pointer; }
+.copy { font: inherit; font-size: 12px; font-weight: 600; border: 0; background: transparent; color: var(--muted); cursor: pointer; padding: 3px 4px; }
+.copy:hover { color: var(--fg); }
+.msg { font-size: 12px; color: var(--accent); font-weight: 600; min-height: 1em; }
+.expr { min-height: 1.6em; font-size: 18px; text-align: right; color: var(--muted); overflow-x: auto; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.res { font-family: var(--font-display); font-weight: 700; font-size: clamp(30px, 7vw, 40px); line-height: 1.25; text-align: right; overflow-x: auto; white-space: nowrap; font-variant-numeric: tabular-nums; min-height: 1.25em; }
+.res.err { color: var(--warn); font-size: 18px; font-family: var(--font-body); font-weight: 600; white-space: normal; padding-block: 8px; }
+.keys { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; }
+.k { font: inherit; font-size: 17px; font-weight: 600; padding: 12px 0; border-radius: 8px; border: 1px solid var(--line); background: var(--surface); color: var(--fg); cursor: pointer; min-width: 0; touch-action: manipulation; }
+.k:hover { border-color: var(--muted); }
+.k:active { transform: translateY(1px); }
+.k.fn { background: var(--bg); font-size: 14px; }
+.k.op { background: var(--soft); color: var(--accent); font-size: 20px; }
+.k.clr { color: var(--warn); }
+.k.eq { background: var(--accent); color: var(--accent-fg); border-color: var(--accent); font-size: 20px; }
+.k.eq:hover { filter: brightness(1.08); }
+
+.hist { display: flex; flex-direction: column; gap: 6px; max-height: 340px; overflow-y: auto; }
+.hist button { font: inherit; text-align: right; background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 8px 12px; cursor: pointer; color: var(--fg); min-width: 0; }
+.hist button:hover { border-color: var(--muted); }
+.hist .he { display: block; font-size: 13px; color: var(--muted); overflow-wrap: anywhere; }
+.hist .hr { display: block; font-weight: 700; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+.empty { color: var(--muted); font-size: 14px; margin: 0; }
+.btn-ghost { font: inherit; font-weight: 600; font-size: 13px; border: 1px solid var(--line); background: transparent; color: var(--muted); border-radius: 8px; padding: 6px 12px; cursor: pointer; margin-top: 12px; }
+.btn-ghost:hover { color: var(--fg); border-color: var(--muted); }
+a.btn-ghost { text-decoration: none; margin-top: 0; padding: 7px 12px; }
+.notes { margin: 0; padding-left: 18px; color: var(--muted); font-size: 13.5px; }
+.notes li { margin-bottom: 4px; }
+kbd { font-family: var(--font-body); font-size: 12px; border: 1px solid var(--line); border-radius: 4px; padding: 0 5px; background: var(--bg); color: var(--fg); }
+/* Ad spaces: fixed heights reserve room so the page does not jump when ads load.
+   To hide them all for now, add display: none to .ad. */
+.ad { display: flex; align-items: center; justify-content: center; width: 100%; min-height: 90px; border: 1px dashed var(--line); border-radius: 10px; color: var(--muted); font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; overflow: hidden; }
+.ad-top { margin-bottom: 20px; }
+.ad-mid { min-height: 250px; }
+.ad-bottom { margin-top: 24px; }
+footer { margin-top: 28px; font-size: 12.5px; color: var(--muted); max-width: 80ch; }
+footer a { color: var(--accent); }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <a class="btn-ghost back" href="index.html">&larr; Vehicle Auctions</a>
+    <h1>Scientific Calculator</h1>
+    <p>Trig, logs, powers, roots and factorials, in degrees or radians. Type on your keyboard or tap the keys.</p>
+  </header>
+
+  <!-- AD SPACE: top banner. Paste your ad code inside this div. -->
+  <div class="ad ad-top" id="ad-top" aria-label="Advertisement">Ad space</div>
+
+  <div class="grid">
+    <div class="panel">
+      <div class="display">
+        <div class="dtop">
+          <button class="mode" id="mode" type="button" aria-label="Angle mode. Press to switch between degrees and radians.">DEG</button>
+          <div class="right"><span class="msg" id="msg" role="status" aria-live="polite"></span><button class="copy" id="copy" type="button">Copy result</button></div>
+        </div>
+        <div class="expr" id="expr" aria-label="Expression"></div>
+        <div class="res" id="res" role="status" aria-live="polite">0</div>
+      </div>
+      <div class="keys" id="keys"></div>
+    </div>
+
+    <div class="side">
+      <div class="panel">
+        <h2>History</h2>
+        <div class="hist" id="hist"></div>
+        <button class="btn-ghost" id="clear-hist" type="button">Clear history</button>
+      </div>
+
+      <!-- AD SPACE: middle of the page. Paste your ad code inside this div. -->
+      <div class="ad ad-mid" id="ad-mid" aria-label="Advertisement">Ad space</div>
+
+      <div class="panel">
+        <h2>Tips</h2>
+        <ul class="notes">
+          <li>Keyboard: digits, <kbd>+</kbd> <kbd>-</kbd> <kbd>*</kbd> <kbd>/</kbd> <kbd>^</kbd> <kbd>(</kbd> <kbd>)</kbd> <kbd>!</kbd> <kbd>%</kbd>, <kbd>Enter</kbd> for equals, <kbd>Backspace</kbd> to delete and <kbd>Esc</kbd> to clear.</li>
+          <li>The answer updates as you type. Missing closing brackets are added for you.</li>
+          <li>Tap DEG or RAD to switch how sin, cos and tan read angles.</li>
+          <li><b>Ans</b> is your last answer. Pressing an operator right after equals continues from it.</li>
+          <li>Powers are worked out before multiplying, so -2^2 gives -4. Writing 2π or 3(4+1) multiplies without a sign.</li>
+          <li>Tap an entry in History to bring its expression back for editing.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- AD SPACE: bottom banner. Paste your ad code inside this div. -->
+  <div class="ad ad-bottom" id="ad-bottom" aria-label="Advertisement">Ad space</div>
+
+  <footer>Answers are shown to 12 significant digits. Factorials work for whole numbers from 0 to 170.<br><a href="privacy-policy.html">Privacy Policy</a></footer>
+</div>
+
+<script>
+(function () {
+  /* CORE START */
+  function CalcError(message) { this.message = message; }
+  var FN = { sin: 1, cos: 1, tan: 1, asin: 1, acos: 1, atan: 1, sinh: 1, cosh: 1, tanh: 1, ln: 1, log: 1, sqrt: 1, cbrt: 1, abs: 1, exp: 1 };
+
+  function fmt(v) {
+    if (v === 0) return '0';
+    var a = Math.abs(v);
+    if (a >= 1e12 || a < 1e-6) {
+      return v.toExponential(9).replace(/\.?0+e/, 'e');
+    }
+    return String(parseFloat(v.toPrecision(12)));
+  }
+
+  function tokenize(src) {
+    var s = src.replace(/×/g, '*').replace(/÷/g, '/').replace(/−/g, '-');
+    var t = [], i = 0;
+    while (i < s.length) {
+      var c = s.charAt(i);
+      if (c === ' ') { i++; continue; }
+      if (/[0-9.]/.test(c)) {
+        var j = i;
+        while (j < s.length && /[0-9.]/.test(s.charAt(j))) j++;
+        var str = s.slice(i, j);
+        if (str === '.' || (str.match(/\./g) || []).length > 1) throw new CalcError('Check the number ' + str);
+        t.push({ t: 'num', v: parseFloat(str) });
+        i = j; continue;
+      }
+      if (/[a-zA-Z]/.test(c)) {
+        var k = i;
+        while (k < s.length && /[a-zA-Z]/.test(s.charAt(k))) k++;
+        var w = s.slice(i, k), lw = w.toLowerCase();
+        if (FN[lw] === 1) t.push({ t: 'fn', v: lw });
+        else if (lw === 'e') t.push({ t: 'num', v: Math.E });
+        else if (lw === 'pi') t.push({ t: 'num', v: Math.PI });
+        else if (lw === 'ans') t.push({ t: 'ans' });
+        else throw new CalcError('Unknown word "' + w + '"');
+        i = k; continue;
+      }
+      if (c === 'π') { t.push({ t: 'num', v: Math.PI }); i++; continue; }
+      if ('+-*/^()!%'.indexOf(c) >= 0) { t.push({ t: 'op', v: c }); i++; continue; }
+      throw new CalcError('Unexpected "' + c + '"');
+    }
+    return t;
+  }
+
+  function evaluate(src, ctx) {
+    var s = src, open = 0, q;
+    for (q = 0; q < s.length; q++) {
+      if (s.charAt(q) === '(') open++;
+      else if (s.charAt(q) === ')') open--;
+    }
+    if (open < 0) throw new CalcError('Too many closing brackets');
+    while (open-- > 0) s += ')';
+    var tokens = tokenize(s);
+    if (!tokens.length) throw new CalcError('Nothing to calculate');
+    var p = 0;
+
+    function isOp(v) { var k = tokens[p]; return !!k && k.t === 'op' && k.v === v; }
+    function show(k) { return k.t === 'op' ? '"' + k.v + '"' : (k.t === 'fn' ? k.v : 'a number'); }
+    function startsPrimary() {
+      var k = tokens[p];
+      if (!k) return false;
+      if (k.t === 'num' || k.t === 'fn' || k.t === 'ans') return true;
+      return k.t === 'op' && k.v === '(';
+    }
+    function fact(a) {
+      if (a < 0 || a !== Math.floor(a) || a > 170) throw new CalcError('Factorial needs a whole number from 0 to 170');
+      var r = 1;
+      for (var n = 2; n <= a; n++) r *= n;
+      return r;
+    }
+    function power(b, e) {
+      if (b === 0 && e < 0) throw new CalcError('Cannot divide by zero');
+      var r = Math.pow(b, e);
+      if (isNaN(r)) throw new CalcError('Not a real number');
+      return r;
+    }
+    function trig(name, a) {
+      var x = ctx.deg ? a * Math.PI / 180 : a, r;
+      if (name === 'sin') r = Math.sin(x);
+      else if (name === 'cos') r = Math.cos(x);
+      else {
+        if (Math.abs(Math.cos(x)) < 1e-14) throw new CalcError('tan is undefined at this angle');
+        r = Math.tan(x);
+      }
+      return Math.abs(r) < 1e-15 ? 0 : r;
+    }
+    function inv(r) { return ctx.deg ? r * 180 / Math.PI : r; }
+    function applyFn(name, a) {
+      switch (name) {
+        case 'sin': case 'cos': case 'tan': return trig(name, a);
+        case 'asin': if (Math.abs(a) > 1) throw new CalcError('sin⁻¹ needs a value from -1 to 1'); return inv(Math.asin(a));
+        case 'acos': if (Math.abs(a) > 1) throw new CalcError('cos⁻¹ needs a value from -1 to 1'); return inv(Math.acos(a));
+        case 'atan': return inv(Math.atan(a));
+        case 'sinh': return Math.sinh(a);
+        case 'cosh': return Math.cosh(a);
+        case 'tanh': return Math.tanh(a);
+        case 'ln': if (a <= 0) throw new CalcError('ln needs a number above 0'); return Math.log(a);
+        case 'log': if (a <= 0) throw new CalcError('log needs a number above 0'); return Math.log10(a);
+        case 'sqrt': if (a < 0) throw new CalcError('Square root of a negative number'); return Math.sqrt(a);
+        case 'cbrt': return Math.cbrt(a);
+        case 'abs': return Math.abs(a);
+        case 'exp': return Math.exp(a);
+      }
+      throw new CalcError('Unknown function');
+    }
+
+    function expr() {
+      var v = term();
+      for (;;) {
+        if (isOp('+')) { p++; v += term(); }
+        else if (isOp('-')) { p++; v -= term(); }
+        else break;
+      }
+      return v;
+    }
+    function term() {
+      var v = unary();
+      for (;;) {
+        if (isOp('*')) { p++; v *= unary(); }
+        else if (isOp('/')) {
+          p++;
+          var d = unary();
+          if (d === 0) throw new CalcError('Cannot divide by zero');
+          v /= d;
+        }
+        else if (startsPrimary()) { v *= unary(); }
+        else break;
+      }
+      return v;
+    }
+    function unary() {
+      if (isOp('-')) { p++; return -unary(); }
+      if (isOp('+')) { p++; return unary(); }
+      return pow();
+    }
+    function pow() {
+      var b = postfix();
+      if (isOp('^')) { p++; return power(b, unary()); }
+      return b;
+    }
+    function postfix() {
+      var v = primary();
+      for (;;) {
+        if (isOp('!')) { p++; v = fact(v); }
+        else if (isOp('%')) { p++; v /= 100; }
+        else break;
+      }
+      return v;
+    }
+    function primary() {
+      var k = tokens[p];
+      if (!k) throw new CalcError('The expression is incomplete');
+      if (k.t === 'num') { p++; return k.v; }
+      if (k.t === 'ans') { p++; return ctx.ans; }
+      if (k.t === 'fn') {
+        p++;
+        if (!isOp('(')) throw new CalcError('Put brackets after ' + k.v);
+        p++;
+        var a = expr();
+        if (!isOp(')')) throw new CalcError('Missing a closing bracket');
+        p++;
+        return applyFn(k.v, a);
+      }
+      if (k.t === 'op' && k.v === '(') {
+        p++;
+        var v = expr();
+        if (!isOp(')')) throw new CalcError('Missing a closing bracket');
+        p++;
+        return v;
+      }
+      if (k.t === 'op' && k.v === ')') throw new CalcError('Something is missing inside the brackets');
+      throw new CalcError('Unexpected ' + show(k));
+    }
+
+    var out = expr();
+    if (p < tokens.length) throw new CalcError('Unexpected ' + show(tokens[p]));
+    if (isNaN(out)) throw new CalcError('Not a real number');
+    if (!isFinite(out)) throw new CalcError('The result is too large');
+    return out;
+  }
+  /* CORE END */
+
+  /* ---------- interface ---------- */
+  var $ = function (id) { return document.getElementById(id); };
+  var state = { expr: '', deg: true, ans: 0, fresh: false, shown: '', line2: '0', good: '0', err: false, hist: [] };
+
+  var LAYOUT = [
+    [['sin', 'fn', 'sin('], ['cos', 'fn', 'cos('], ['tan', 'fn', 'tan('], ['ln', 'fn', 'ln('], ['log', 'fn', 'log(']],
+    [['sin⁻¹', 'fn', 'asin(', 'Inverse sine'], ['cos⁻¹', 'fn', 'acos(', 'Inverse cosine'], ['tan⁻¹', 'fn', 'atan(', 'Inverse tangent'], ['eˣ', 'fn', 'exp(', 'e to the power'], ['10ˣ', 'fn', '10^(', '10 to the power']],
+    [['sinh', 'fn', 'sinh('], ['cosh', 'fn', 'cosh('], ['tanh', 'fn', 'tanh('], ['|x|', 'fn', 'abs(', 'Absolute value'], ['∛', 'fn', 'cbrt(', 'Cube root']],
+    [['√', 'fn', 'sqrt(', 'Square root'], ['x²', 'fn', '^2', 'Square'], ['xʸ', 'fn', '^', 'Power'], ['1/x', 'fn', '^(−1)', 'Reciprocal'], ['n!', 'fn', '!', 'Factorial']],
+    [['π', 'fn', 'π', 'Pi'], ['e', 'fn', 'e', 'Euler number e'], ['(', 'fn', '('], [')', 'fn', ')'], ['%', 'fn', '%', 'Percent']],
+    [['7', 'num', '7'], ['8', 'num', '8'], ['9', 'num', '9'], ['÷', 'op', '÷', 'Divide'], ['AC', 'clr', '@ac', 'All clear']],
+    [['4', 'num', '4'], ['5', 'num', '5'], ['6', 'num', '6'], ['×', 'op', '×', 'Multiply'], ['⌫', 'clr', '@back', 'Backspace']],
+    [['1', 'num', '1'], ['2', 'num', '2'], ['3', 'num', '3'], ['−', 'op', '−', 'Minus'], ['Ans', 'fn', 'Ans', 'Last answer']],
+    [['0', 'num', '0'], ['.', 'num', '.', 'Decimal point'], ['EXP', 'fn', '×10^', 'Times 10 to the power'], ['+', 'op', '+', 'Plus'], ['=', 'eq', '@eq', 'Equals']]
+  ];
+
+  function ctx() { return { deg: state.deg, ans: state.ans }; }
+
+  function paint() {
+    var e = $('expr'), r = $('res');
+    e.textContent = state.fresh ? state.shown + ' =' : state.expr;
+    r.textContent = state.line2;
+    r.className = 'res' + (state.err ? ' err' : '');
+    e.scrollLeft = e.scrollWidth;
+    r.scrollLeft = r.scrollWidth;
+    $('mode').textContent = state.deg ? 'DEG' : 'RAD';
+  }
+
+  function refresh() {
+    if (!state.fresh) {
+      if (state.expr === '') { state.line2 = '0'; state.good = '0'; }
+      else {
+        try { state.line2 = fmt(evaluate(state.expr, ctx())); state.good = state.line2; }
+        catch (e) { if (!(e instanceof CalcError)) throw e; state.line2 = state.good; }
+      }
+    }
+    state.err = false;
+    paint();
+  }
+
+  function press(ins) {
+    var first = ins.charAt(0);
+    var continuing = '+−×÷^!%'.indexOf(first) >= 0;
+    if (state.fresh) {
+      state.expr = continuing ? 'Ans' + ins : ins;
+      state.fresh = false;
+    } else {
+      var last = state.expr.charAt(state.expr.length - 1);
+      if ('+×÷^'.indexOf(ins) >= 0 && ins.length === 1 && last !== '' && '+−×÷^'.indexOf(last) >= 0) {
+        state.expr = state.expr.slice(0, -1) + ins;
+      } else {
+        state.expr += ins;
+      }
+    }
+    refresh();
+  }
+
+  function back() {
+    if (state.fresh) { state.fresh = false; state.expr = state.shown; }
+    else { state.expr = state.expr.replace(/(?:asin|acos|atan|sinh|cosh|tanh|sin|cos|tan|ln|log|sqrt|cbrt|abs|exp)\($|Ans$|.$/, ''); }
+    refresh();
+  }
+
+  function clearAll() {
+    state.expr = ''; state.fresh = false; state.shown = ''; state.line2 = '0';
+    refresh();
+  }
+
+  function equals() {
+    if (state.fresh || state.expr === '') return;
+    try {
+      var v = evaluate(state.expr, ctx());
+      var kept = parseFloat(v.toPrecision(15));
+      state.ans = kept;
+      var text = fmt(kept);
+      state.hist.unshift({ expr: state.expr, text: text });
+      if (state.hist.length > 12) state.hist.pop();
+      state.shown = state.expr; state.expr = ''; state.fresh = true;
+      state.line2 = text; state.good = text; state.err = false;
+      renderHist();
+    } catch (e) {
+      if (!(e instanceof CalcError)) throw e;
+      state.line2 = e.message; state.err = true;
+    }
+    paint();
+  }
+
+  function renderHist() {
+    var box = $('hist');
+    box.textContent = '';
+    if (!state.hist.length) {
+      var p = document.createElement('p');
+      p.className = 'empty';
+      p.textContent = 'Your calculations will appear here.';
+      box.appendChild(p);
+      return;
+    }
+    state.hist.forEach(function (h) {
+      var b = document.createElement('button');
+      b.type = 'button';
+      var a = document.createElement('span'); a.className = 'he'; a.textContent = h.expr;
+      var c = document.createElement('span'); c.className = 'hr'; c.textContent = '= ' + h.text;
+      b.appendChild(a); b.appendChild(c);
+      b.addEventListener('click', function () { state.expr = h.expr; state.fresh = false; refresh(); });
+      box.appendChild(b);
+    });
+  }
+
+  function act(a) {
+    if (a === '@ac') clearAll();
+    else if (a === '@back') back();
+    else if (a === '@eq') equals();
+  }
+
+  var keys = $('keys');
+  LAYOUT.forEach(function (row) {
+    row.forEach(function (d) {
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'k ' + d[1];
+      b.textContent = d[0];
+      if (d[3]) b.setAttribute('aria-label', d[3]);
+      b.addEventListener('click', function () { if (d[2].charAt(0) === '@') act(d[2]); else press(d[2]); });
+      keys.appendChild(b);
+    });
+  });
+
+  $('mode').addEventListener('click', function () { state.deg = !state.deg; refresh(); });
+  $('clear-hist').addEventListener('click', function () { state.hist = []; renderHist(); });
+
+  var msgTimer;
+  function say(t) {
+    var m = $('msg');
+    m.textContent = t;
+    clearTimeout(msgTimer);
+    msgTimer = setTimeout(function () { m.textContent = ''; }, 2200);
+  }
+  $('copy').addEventListener('click', function () {
+    if (state.err) return;
+    var text = state.line2;
+    function fallback() {
+      try {
+        var r = document.createRange();
+        r.selectNodeContents($('res'));
+        var sel = window.getSelection();
+        sel.removeAllRanges(); sel.addRange(r);
+        say('Selected. Press Ctrl+C');
+      } catch (e) { say('Could not copy'); }
+    }
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(function () { say('Copied'); }, fallback);
+      } else { fallback(); }
+    } catch (e) { fallback(); }
+  });
+
+  var tabbing = false;
+  document.addEventListener('pointerdown', function () { tabbing = false; });
+  document.addEventListener('keydown', function (e) {
+    if (e.ctrlKey || e.metaKey || e.altKey) return;
+    if (e.key === 'Tab') { tabbing = true; return; }
+    var t = e.target;
+    /* Someone tabbing through the buttons keeps the normal Enter and Space behavior.
+       After a mouse or touch press the button keeps focus, so Enter there should mean equals. */
+    if (t && t.tagName === 'BUTTON' && (e.key === 'Enter' || e.key === ' ') && tabbing) return;
+    var k = e.key, map = { '*': '×', '/': '÷', '-': '−' };
+    if (/^[0-9.]$/.test(k) || '+^()!%'.indexOf(k) >= 0 && k.length === 1) { press(k); e.preventDefault(); }
+    else if (map[k]) { press(map[k]); e.preventDefault(); }
+    else if (k === 'Enter' || k === '=') { equals(); e.preventDefault(); }
+    else if (k === 'Backspace') { back(); e.preventDefault(); }
+    else if (k === 'Escape') { clearAll(); e.preventDefault(); }
+  });
+
+  renderHist();
+  refresh();
+})();
+</script>
+</body>
+</html>
