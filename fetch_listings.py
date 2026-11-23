@@ -76,7 +76,10 @@ def is_vehicle(name, desc=""):
     up = (name or "").upper()
     if not up or BAD_RE.search(up):
         return False
-    return bool(MAKE_RE.search(up) or BODY_RE.search(up))
+    if MAKE_RE.search(up) or BODY_RE.search(up):
+        return True
+    d = (desc or "").upper()
+    return bool(re.search(r"\bVIN\b|\bODOMETER\b|\bMILEAGE\b", d) or MAKE_RE.search(d))
 
 
 def transform_gsa(results, today):
@@ -169,7 +172,13 @@ def transform_ebay(resp):
 def fetch_gsa(api_key):
     resp = http_json(GSA_URL, {"X-API-KEY": api_key, "Accept": "application/json"})
     results = resp.get("results") if isinstance(resp, dict) else resp
-    return transform_gsa(results, datetime.datetime.utcnow().date())
+    results = results or []
+    log("GSA API returned %d auction lots in total." % len(results))
+    if not results:
+        log("Raw response (first 300 chars): %s" % json.dumps(resp)[:300])
+    for r in results[:15]:
+        log("  sample: %r | end %r | status %r" % ((r.get("ItemName") or "")[:60], r.get("AucEndDt"), r.get("AuctionStatus")))
+    return transform_gsa(results, datetime.datetime.now(datetime.timezone.utc).date())
 
 
 def fetch_ebay(client_id, secret, campaign):
@@ -241,7 +250,7 @@ def main():
         return 1
 
     doc = {
-        "updated": datetime.datetime.utcnow().replace(microsecond=0).isoformat() + "Z",
+        "updated": datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
         "affiliate": bool(campaign and "ebay" in sources and sources["ebay"].get("ok")),
         "sources": sources,
         "listings": listings,
