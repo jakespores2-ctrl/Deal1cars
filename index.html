@@ -6,14 +6,14 @@
 <link rel="icon" href="favicon.ico" sizes="48x48">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
-<title>Deal1Cars Auction Listings</title>
-<meta name="description" content="Search cars, trucks, boats, trailers and more from government surplus auctions (GSA Auctions) and eBay Motors. Filter by type, state, price or distance from your ZIP code. Updated daily.">
+<title>Deal1Cars: Government and eBay Car, Truck and Boat Auctions</title>
+<meta name="description" content="Deal1Cars lists cars, trucks, boats and trailers from government surplus auctions (GSA Auctions) and eBay Motors. Search by type, state, price or distance from your ZIP code. Updated daily.">
 <link rel="canonical" href="https://deal1cars.com/">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Deal1Cars: Government and eBay Motors vehicle and boat auctions">
 <meta property="og:description" content="Search vehicles and boats from GSA Auctions and eBay Motors in one place, updated daily.">
 <meta property="og:url" content="https://deal1cars.com/">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"Deal1Cars","url":"https://deal1cars.com/","description":"Vehicle and boat auction listings from GSA Auctions and eBay Motors, with free car calculators."}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"Deal1Cars","alternateName":["Deal 1 Cars","deal1cars.com"],"url":"https://deal1cars.com/","description":"Vehicle and boat auction listings from GSA Auctions and eBay Motors, with free car calculators."}</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Inter:wght@400;500;600&display=swap">
 <style>
@@ -116,6 +116,9 @@ a { color: var(--accent); }
 .empty p { margin: 0 auto 8px; max-width: 60ch; color: var(--muted); }
 .more { display: block; margin: 22px auto 0; padding: 11px 26px; font: inherit; font-weight: 600; background: var(--accent); color: var(--accent-fg); border: 0; border-radius: 10px; cursor: pointer; }
 
+.about { margin-top: 34px; max-width: 80ch; }
+.about h2 { font-family: var(--font-display); font-size: 20px; margin: 0 0 8px; }
+.about p { color: var(--muted); margin: 0 0 10px; }
 .tools { margin-top: 34px; display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 12px; }
 .tools h2 { grid-column: 1 / -1; font-family: var(--font-display); font-size: 20px; margin: 0; }
 .tool { display: block; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; text-decoration: none; color: var(--fg); }
@@ -132,9 +135,9 @@ footer { margin-top: 28px; font-size: 12.5px; color: var(--muted); max-width: 90
 <body>
 <div class="wrap">
   <div class="sitebar">
-    <a class="brand" href="index.html"><img src="favicon.svg" alt="" width="28" height="28">Deal1Cars</a>
+    <a class="brand" href="/"><img src="favicon.svg" alt="" width="28" height="28">Deal1Cars</a>
     <nav aria-label="Main">
-      <a class="primary" href="index.html" aria-current="page">Auctions</a>
+      <a class="primary" href="/" aria-current="page">Auctions</a>
       <span class="sep" aria-hidden="true"></span>
       <a href="auto-loan-calculator.html">Loan Calculator</a>
       <a href="tax-return.html">Tax Estimate</a>
@@ -168,6 +171,7 @@ footer { margin-top: 28px; font-size: 12.5px; color: var(--muted); max-width: 90
   <div class="ad ad-top" id="ad-top" aria-label="Advertisement">Ad space</div>
 
   <div class="status" id="status" aria-live="polite"><span id="count">Loading listings&hellip;</span><span id="updated"></span></div>
+  <noscript><p>Listings need JavaScript to display. Browse GSA vehicle auctions directly at <a href="https://gsaauctions.gov/">gsaauctions.gov</a>.</p></noscript>
   <div id="out"><div class="grid"><div class="skel"></div><div class="skel"></div><div class="skel"></div></div></div>
 
   <!-- AD SPACE: middle banner. Paste your ad code inside this div. -->
@@ -178,6 +182,12 @@ footer { margin-top: 28px; font-size: 12.5px; color: var(--muted); max-width: 90
     <a class="tool" href="auto-loan-calculator.html"><b>Auto Loan Calculator</b><span>Monthly payment, and how much car you can afford.</span></a>
     <a class="tool" href="tax-return.html"><b>2026 Tax Return Estimate</b><span>Estimate your federal refund or balance due.</span></a>
     <a class="tool" href="scientific-calculator.html"><b>Scientific Calculator</b><span>Trig, logs, powers and more.</span></a>
+  </section>
+
+  <section class="about" aria-label="About Deal1Cars">
+    <h2>Government surplus and eBay Motors auctions, searchable in one place</h2>
+    <p>Deal1Cars gathers vehicle, boat and trailer auctions from <strong>GSA Auctions</strong>, the U.S. government's surplus sales site, and <strong>eBay Motors</strong>. Search by make, model, type, state, price, or distance from your ZIP code, then click through to the original listing to bid.</p>
+    <p>Government surplus vehicles are often sold by federal agencies after service and can include sedans, trucks, vans, buses, boats and trailers. Condition varies, so read each listing and inspect before you bid.</p>
   </section>
 
   <footer>

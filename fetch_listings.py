@@ -16,6 +16,7 @@ import json
 import os
 import re
 import sys
+import time
 import urllib.error
 import urllib.parse
 import urllib.request
@@ -48,6 +49,11 @@ MAKE_RE, BODY_RE, BAD_RE = word_re(MAKES), word_re(BODIES), word_re(BAD)
 CAT_RES = [(c, word_re(w.split())) for c, w in CATS]
 EQUIP_RE = word_re(EQUIP.split())
 YEAR_RE = re.compile(r"\b(19[5-9]\d|20[0-3]\d)\b")
+
+
+def zip5(v):
+    m = re.match(r"^\s*(\d{5})(?:-\d{4})?\s*$", str(v or ""))
+    return m.group(1) if m else ""
 
 
 def log(msg):
@@ -140,6 +146,7 @@ def transform_gsa(results, today):
             "bids": int(to_number(r.get("bidderscount")) or 0),
             "endDate": end or None,
             "endAt": None,
+            "zip": zip5(r.get("propertyzip") or r.get("locationzip")),
             "city": nice_title(city) if city else "",
             "state": state,
             "image": image,
@@ -184,6 +191,7 @@ def transform_ebay(resp):
             "bids": int(to_number(it.get("bidCount")) or 0),
             "endDate": (it.get("itemEndDate") or "")[:10] or None,
             "endAt": it.get("itemEndDate") or None,
+            "zip": zip5(loc.get("postalCode")),
             "city": (loc.get("city") or "").strip(),
             "state": (loc.get("stateOrProvince") or "").strip().upper()[:2],
             "image": ((it.get("image") or {}).get("imageUrl") or ""),
@@ -222,6 +230,43 @@ def fetch_ebay(client_id, secret, campaign):
         if len((resp or {}).get("itemSummaries") or []) < 50:
             break
     return items[:MAX_PER_SOURCE]
+
+
+GEO_FILE = os.environ.get("GEO_CACHE_FILE", "geo_cache.json")
+MAX_NEW_GEO = 400
+
+
+def geocode(listings):
+    """Add lat/lon to each listing from its ZIP code (free zippopotam.us lookups, cached in geo_cache.json)."""
+    try:
+        with open(GEO_FILE, encoding="utf-8") as f:
+            cache = json.load(f)
+    except (OSError, ValueError):
+        cache = {}
+    need = sorted({l.get("zip") for l in listings if l.get("zip") and l["zip"] not in cache})[:MAX_NEW_GEO]
+    done = 0
+    for z in need:
+        try:
+            d = http_json("https://api.zippopotam.us/us/" + z, timeout=20)
+            pl = (d.get("places") or [{}])[0]
+            cache[z] = [round(float(pl["latitude"]), 3), round(float(pl["longitude"]), 3)]
+        except urllib.error.HTTPError as e:
+            if e.code == 404:
+                cache[z] = None  # not a real ZIP, do not ask again
+        except Exception:
+            pass  # network hiccup, try again on the next run
+        done += 1
+        time.sleep(0.1)
+    for l in listings:
+        c = cache.get(l.get("zip") or "")
+        if c:
+            l["lat"], l["lon"] = c
+    try:
+        with open(GEO_FILE, "w", encoding="utf-8") as f:
+            json.dump(cache, f, separators=(",", ":"), sort_keys=True)
+    except OSError:
+        pass
+    log("Locations: looked up %d new ZIPs, %d listings have coordinates." % (done, sum(1 for l in listings if "lat" in l)))
 
 
 def load_previous():
@@ -275,6 +320,10 @@ def main():
         log("Every source failed and there is no earlier data. Leaving %s unchanged." % OUT)
         return 1
 
+    try:
+        geocode(listings)
+    except Exception as e:
+        log("Location lookup skipped: %s" % e)
     doc = {
         "updated": datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
         "affiliate": bool(campaign and "ebay" in sources and sources["ebay"].get("ok")),
