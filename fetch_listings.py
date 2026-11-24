@@ -62,8 +62,17 @@ def log(msg):
 
 def http_json(url, headers=None, data=None, method=None, timeout=90):
     req = urllib.request.Request(url, headers=headers or {}, data=data, method=method)
-    with urllib.request.urlopen(req, timeout=timeout) as r:
-        return json.loads(r.read().decode("utf-8"))
+    try:
+        with urllib.request.urlopen(req, timeout=timeout) as r:
+            return json.loads(r.read().decode("utf-8"))
+    except urllib.error.HTTPError as err:
+        if err.code == 404:
+            raise
+        try:
+            body = err.read().decode("utf-8", "replace")[:300]
+        except Exception:
+            body = ""
+        raise RuntimeError("HTTP %s %s | %s" % (err.code, err.reason, body))
 
 
 def nice_title(text):
@@ -261,6 +270,29 @@ def geocode(listings):
         c = cache.get(l.get("zip") or "")
         if c:
             l["lat"], l["lon"] = c
+    # listings with no usable ZIP (eBay often hides it): fall back to city + state
+    def ckey(l):
+        city, st = (l.get("city") or "").strip().lower(), (l.get("state") or "").strip().upper()
+        return ("c:%s|%s" % (city, st)) if city and re.match(r"^[A-Z]{2}$", st) else ""
+    need_c = sorted({ckey(l) for l in listings if "lat" not in l and ckey(l) and ckey(l) not in cache})[:MAX_NEW_GEO]
+    for k in need_c:
+        city, st = k[2:].split("|")
+        try:
+            d = http_json("https://api.zippopotam.us/us/%s/%s" % (st.lower(), urllib.parse.quote(city)), timeout=20)
+            pl = (d.get("places") or [{}])[0]
+            cache[k] = [round(float(pl["latitude"]), 3), round(float(pl["longitude"]), 3)]
+        except urllib.error.HTTPError as e:
+            if e.code == 404:
+                cache[k] = None
+        except Exception:
+            pass
+        done += 1
+        time.sleep(0.1)
+    for l in listings:
+        if "lat" not in l and ckey(l):
+            c = cache.get(ckey(l))
+            if c:
+                l["lat"], l["lon"] = c
     try:
         with open(GEO_FILE, "w", encoding="utf-8") as f:
             json.dump(cache, f, separators=(",", ":"), sort_keys=True)
