@@ -258,7 +258,7 @@ def main():
 
     # sitemap
     today = now.strftime("%Y-%m-%d")
-    fixed = ["/", "/auto-loan-calculator.html", "/more-auction-sites.html", "/tax-return.html", "/scientific-calculator.html", "/privacy-policy.html"]
+    fixed = ["/", "/auto-loan-calculator.html", "/more-auction-sites.html", "/guides/how-to-buy-government-surplus-vehicle.html", "/guides/auction-fees-and-hidden-costs.html", "/tax-return.html", "/scientific-calculator.html", "/privacy-policy.html"]
     urls = [(u, "1.0" if u == "/" else None) for u in fixed] + [(u, None) for u in written]
     xml = ['<?xml version="1.0" encoding="UTF-8"?>', '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
     for u, pr in urls:
