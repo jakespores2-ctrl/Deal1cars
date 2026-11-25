@@ -7,11 +7,11 @@
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <title>Deal1Cars: Government and eBay Car, Truck and Boat Auctions</title>
-<meta name="description" content="Deal1Cars lists cars, trucks, boats and trailers from government surplus auctions (GSA Auctions) and eBay Motors. Search by type, state, price or distance from your ZIP code. Updated daily.">
+<meta name="description" content="Deal1Cars lists cars, trucks, boats and trailers from government surplus auctions (GSA Auctions) and eBay Motors. Search by type, state, price or distance from your ZIP code. Updated hourly.">
 <link rel="canonical" href="https://deal1cars.com/">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Deal1Cars: Government and eBay Motors vehicle and boat auctions">
-<meta property="og:description" content="Search vehicles and boats from GSA Auctions and eBay Motors in one place, updated daily.">
+<meta property="og:description" content="Search vehicles and boats from GSA Auctions and eBay Motors in one place, updated hourly.">
 <meta property="og:url" content="https://deal1cars.com/">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"Deal1Cars","alternateName":["Deal 1 Cars","deal1cars.com"],"url":"https://deal1cars.com/","description":"Vehicle and boat auction listings from GSA Auctions and eBay Motors, with free car calculators."}</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -80,6 +80,8 @@ a { color: var(--accent); }
 .btn { font: inherit; font-weight: 600; font-size: 14px; border: 1px solid var(--accent); background: transparent; color: var(--accent); border-radius: 10px; padding: 10px 14px; cursor: pointer; white-space: nowrap; }
 .btn:hover { background: var(--accent); color: var(--accent-fg); }
 .btn.solid { background: var(--accent); color: var(--accent-fg); }
+.resetrow { display: flex; justify-content: flex-end; margin-top: 12px; }
+.btn:disabled { opacity: .6; cursor: default; }
 .area-note { font-size: 12.5px; color: var(--muted); margin-top: 6px; min-height: 18px; }
 .area-note.err { color: var(--warn); }
 .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
@@ -150,7 +152,7 @@ footer { margin-top: 28px; font-size: 12.5px; color: var(--muted); max-width: 90
   .fgrid { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 12px; padding-bottom: 8px; margin: 0 -16px; padding-left: 16px; padding-right: 16px; }
   .fgrid .card { flex: 0 0 78%; scroll-snap-align: start; }
 }
-@media (max-width: 480px) { .row.r1 { grid-template-columns: 1fr; } .hero { padding: 28px 18px 26px; } }
+@media (max-width: 480px) { .resetrow .btn { width: 100%; } .row.r1 { grid-template-columns: 1fr; } .hero { padding: 28px 18px 26px; } }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
 </style>
 </head>
@@ -169,8 +171,8 @@ footer { margin-top: 28px; font-size: 12.5px; color: var(--muted); max-width: 90
 
   <section class="hero">
     <h1>Find your next vehicle or boat at auction</h1>
-    <p>Government surplus (GSA Auctions) and eBay Motors listings in one searchable place, refreshed daily. Every listing opens on the original site, where you bid.</p>
-    <div class="pills" id="pills"><span>GSA Auctions</span><span>eBay Motors</span><span>Updated daily</span></div>
+    <p>Government surplus (GSA Auctions) and eBay Motors listings in one searchable place, refreshed every hour. Every listing opens on the original site, where you bid.</p>
+    <div class="pills" id="pills"><span>GSA Auctions</span><span>eBay Motors</span><span>Updated hourly</span></div>
   </section>
 
   <section class="featured" id="featured" aria-label="Ending soon" hidden>
@@ -193,6 +195,7 @@ footer { margin-top: 28px; font-size: 12.5px; color: var(--muted); max-width: 90
       <div><label for="max">Max price</label><input id="max" type="number" min="0" step="500" inputmode="numeric" placeholder="No limit"></div>
       <div><label for="sort">Sort by</label><select id="sort"><option value="end">Ending soonest</option><option value="near" id="optnear" hidden>Nearest first</option><option value="pl">Price: low to high</option><option value="ph">Price: high to low</option><option value="yr">Newest model year</option></select></div>
     </div>
+    <div class="resetrow"><button class="btn" id="reset" type="button">Reset search &amp; refresh listings</button></div>
   </section>
 
   <!-- AD SPACE: top banner. Paste your ad code inside this div. -->
@@ -207,7 +210,7 @@ footer { margin-top: 28px; font-size: 12.5px; color: var(--muted); max-width: 90
 
   <section class="browse" aria-label="Browse by type and state">
     <h2>Browse by type and state</h2>
-    <ul><!--BROWSE-LINKS--><li><a href="/browse/government-surplus-trucks.html">Government Surplus Trucks</a></li><li><a href="/browse/government-surplus-suvs-and-vans.html">Government Surplus SUVs and Vans</a></li><li><a href="/browse/government-surplus-cars-and-trucks.html">Government Surplus Cars and Trucks</a></li><li><a href="/browse/boats-at-auction.html">Boats</a></li><li><a href="/browse/trailers-at-auction.html">Trailers</a></li><li><a href="/browse/motorcycles-and-atvs-at-auction.html">Motorcycles, ATVs and UTVs</a></li><li><a href="/browse/rvs-and-motorhomes-at-auction.html">RVs and Motorhomes</a></li><li><a href="/browse/heavy-equipment-at-auction.html">Heavy Equipment</a></li><li><a href="/browse/government-surplus-vehicles-alabama.html">Alabama (7)</a></li><li><a href="/browse/government-surplus-vehicles-arizona.html">Arizona (7)</a></li><li><a href="/browse/government-surplus-vehicles-arkansas.html">Arkansas (4)</a></li><li><a href="/browse/government-surplus-vehicles-california.html">California (16)</a></li><li><a href="/browse/government-surplus-vehicles-colorado.html">Colorado (16)</a></li><li><a href="/browse/government-surplus-vehicles-georgia.html">Georgia (10)</a></li><li><a href="/browse/government-surplus-vehicles-maine.html">Maine (7)</a></li><li><a href="/browse/government-surplus-vehicles-michigan.html">Michigan (10)</a></li><li><a href="/browse/government-surplus-vehicles-mississippi.html">Mississippi (9)</a></li><li><a href="/browse/government-surplus-vehicles-missouri.html">Missouri (3)</a></li><li><a href="/browse/government-surplus-vehicles-new-jersey.html">New Jersey (3)</a></li><li><a href="/browse/government-surplus-vehicles-new-mexico.html">New Mexico (5)</a></li><li><a href="/browse/government-surplus-vehicles-north-carolina.html">North Carolina (12)</a></li><li><a href="/browse/government-surplus-vehicles-oklahoma.html">Oklahoma (5)</a></li><li><a href="/browse/government-surplus-vehicles-oregon.html">Oregon (7)</a></li><li><a href="/browse/government-surplus-vehicles-pennsylvania.html">Pennsylvania (8)</a></li><li><a href="/browse/government-surplus-vehicles-puerto-rico.html">Puerto Rico (3)</a></li><li><a href="/browse/government-surplus-vehicles-south-carolina.html">South Carolina (6)</a></li><li><a href="/browse/government-surplus-vehicles-south-dakota.html">South Dakota (3)</a></li><li><a href="/browse/government-surplus-vehicles-texas.html">Texas (8)</a></li><li><a href="/browse/government-surplus-vehicles-utah.html">Utah (19)</a></li><li><a href="/browse/government-surplus-vehicles-washington.html">Washington (10)</a></li><li><a href="/browse/government-surplus-vehicles-wisconsin.html">Wisconsin (12)</a></li><li><a href="/browse/government-surplus-vehicles-wyoming.html">Wyoming (3)</a></li><!--/BROWSE-LINKS--></ul>
+    <ul><!--BROWSE-LINKS--><li><a href="/browse/government-surplus-trucks.html">Trucks</a></li><li><a href="/browse/government-surplus-suvs-and-vans.html">SUVs and vans</a></li><li><a href="/browse/government-surplus-cars-and-trucks.html">Cars and trucks</a></li><li><a href="/browse/boats-at-auction.html">Boats</a></li><li><a href="/browse/trailers-at-auction.html">Trailers</a></li><li><a href="/browse/motorcycles-and-atvs-at-auction.html">Motorcycles and ATVs</a></li><li><a href="/browse/rvs-and-motorhomes-at-auction.html">RVs and motorhomes</a></li><li><a href="/browse/heavy-equipment-at-auction.html">Heavy equipment</a></li><!--/BROWSE-LINKS--></ul>
   </section>
 
   <section class="tools" aria-label="Free tools">
@@ -225,7 +228,7 @@ footer { margin-top: 28px; font-size: 12.5px; color: var(--muted); max-width: 90
   </section>
 
   <footer>
-    Deal1Cars is an independent site and is not affiliated with GSA, GSA Auctions or eBay. Listing details, prices and end times come from those sites and can change or be out of date, so always confirm on the original listing before you bid. Prices shown are the last bid seen at the daily update. Distances are approximate and measured from the center of each ZIP code. <span id="affnote" hidden>Some eBay links are affiliate links, which means this site may earn a commission if you buy, at no extra cost to you.</span><br>
+    Deal1Cars is an independent site and is not affiliated with GSA, GSA Auctions or eBay. Listing details, prices and end times come from those sites and can change or be out of date, so always confirm on the original listing before you bid. Prices shown are the last bid seen at the latest update. Distances are approximate and measured from the center of each ZIP code. <span id="affnote" hidden>Some eBay links are affiliate links, which means this site may earn a commission if you buy, at no extra cost to you.</span><br>
     <a href="privacy-policy.html">Privacy Policy</a>
   </footer>
 </div>
@@ -270,11 +273,14 @@ footer { margin-top: 28px; font-size: 12.5px; color: var(--muted); max-width: 90
     return ABBR[t.toLowerCase()] || "";
   }
 
+  function live(l) { var d = l.endAt ? new Date(l.endAt) : null; return !d || isNaN(d) || d.getTime() > Date.now(); }
+
   function filtered() {
     var q = $("q").value.trim().toLowerCase(), src = $("src").value, st = $("st").value;
     var max = parseFloat($("max").value), rad = parseFloat($("rad").value), sort = $("sort").value;
     var hidden = 0;
     var rows = all.filter(function (l) {
+      if (!live(l)) return false;
       if (cat && catOf(l) !== cat) return false;
       if (src && l.source !== src) return false;
       if (st && l.state !== st) return false;
@@ -416,32 +422,59 @@ footer { margin-top: 28px; font-size: 12.5px; color: var(--muted); max-width: 90
     countEl.textContent = "No listings loaded yet"; out.textContent = "";
     var e = el("div", "empty");
     e.appendChild(el("h2", null, "Listings are on the way"));
-    e.appendChild(el("p", null, "This page fills in automatically once the daily update has run. Check back soon, or try the calculators in the meantime."));
+    e.appendChild(el("p", null, "This page fills in automatically once the latest update has run. Check back soon, or try the calculators in the meantime."));
     out.appendChild(e);
   }
 
-  function init(data) {
-    all = (data && Array.isArray(data.listings)) ? data.listings.filter(function (l) { return l && l.title; }) : [];
-    if (data && data.updated) { var d = new Date(data.updated); if (!isNaN(d)) $("updated").textContent = "Updated " + d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }); }
+  var bound = false;
+  function applyData(data) {
+    all = (data && Array.isArray(data.listings)) ? data.listings.filter(function (l) { return l && l.title && live(l); }) : [];
+    if (data && data.updated) { var d = new Date(data.updated); if (!isNaN(d)) $("updated").textContent = "Updated " + d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) + " " + d.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" }); }
     if (data && data.affiliate) $("affnote").hidden = false;
     all.forEach(function (l) { l.state = normState(l.state); });
-    if (!all.length) { showEmpty(); return; }
-    var states = {}; all.forEach(function (l) { if (l.state) states[l.state] = 1; });
+    if (!all.length) { showEmpty(); return false; }
+    var keep = $("st").value, states = {};
+    all.forEach(function (l) { if (l.state) states[l.state] = 1; });
+    $("st").length = 1;
     Object.keys(states).sort().forEach(function (s) { var o = document.createElement("option"); o.value = s; o.textContent = s; $("st").appendChild(o); });
-    ["q", "max"].forEach(function (id) { $(id).addEventListener("input", function () { shown = PAGE; render(); }); });
-    ["src", "st", "sort"].forEach(function (id) { $(id).addEventListener("change", function () { shown = PAGE; render(); }); });
-    $("rad").addEventListener("change", function () { if (me) { setNote("Showing listings within " + $("rad").value + " miles."); } shown = PAGE; render(); });
-    $("zip").addEventListener("input", onZip);
-    $("loc").addEventListener("click", onLoc);
-    try {
-      var qs = new URLSearchParams(location.search);
-      if (qs.get("q")) $("q").value = qs.get("q").slice(0, 60);
-      var t = qs.get("type"); if (t && CATNAME[t]) cat = t;
-      var stq = (qs.get("state") || "").toUpperCase(); if (stq && states[stq]) $("st").value = stq;
-    } catch (e) {}
+    if (keep && states[keep]) $("st").value = keep;
+    return states;
+  }
+
+  function init(data) {
+    var states = applyData(data);
+    if (!states) return;
+    if (!bound) {
+      bound = true;
+      ["q", "max"].forEach(function (id) { $(id).addEventListener("input", function () { shown = PAGE; render(); }); });
+      ["src", "st", "sort"].forEach(function (id) { $(id).addEventListener("change", function () { shown = PAGE; render(); }); });
+      $("rad").addEventListener("change", function () { if (me) { setNote("Showing listings within " + $("rad").value + " miles."); } shown = PAGE; render(); });
+      $("zip").addEventListener("input", onZip);
+      $("loc").addEventListener("click", onLoc);
+      $("reset").addEventListener("click", onReset);
+      try {
+        var qs = new URLSearchParams(location.search);
+        if (qs.get("q")) $("q").value = qs.get("q").slice(0, 60);
+        var t = qs.get("type"); if (t && CATNAME[t]) cat = t;
+        var stq = (qs.get("state") || "").toUpperCase(); if (stq && states[stq]) $("st").value = stq;
+      } catch (e) {}
+    }
     drawChips(); drawFeatured(); render();
   }
 
+  function onReset() {
+    var btn = $("reset");
+    ["q", "zip", "max"].forEach(function (id) { $(id).value = ""; });
+    $("rad").value = "100"; $("src").value = ""; $("st").value = ""; $("sort").value = "end";
+    cat = ""; me = null; geoSeq++; shown = PAGE; $("optnear").hidden = true; setNote("");
+    try { history.replaceState(null, "", location.pathname); } catch (e) {}
+    btn.disabled = true; btn.textContent = "Refreshing\u2026";
+    fetch("listings.json?t=" + Date.now(), { cache: "no-store" }).then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); }).then(init)
+      .catch(function () { drawChips(); render(); })
+      .then(function () { btn.disabled = false; btn.textContent = "Reset search & refresh listings"; });
+  }
+
+  setInterval(function () { if (all.length) { drawChips(); render(); } }, 60000);
   fetch("listings.json", { cache: "no-cache" }).then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); }).then(init).catch(function () {
     countEl.textContent = "Listings could not be loaded"; out.textContent = "";
     var e = el("div", "empty"); e.appendChild(el("h2", null, "Couldn't load listings")); e.appendChild(el("p", null, "Please refresh the page in a moment.")); out.appendChild(e);

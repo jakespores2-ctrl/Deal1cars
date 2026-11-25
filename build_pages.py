@@ -45,7 +45,7 @@ TYPES = [
      "type=vehicle&q=suv"),
     ("government-surplus-cars-and-trucks", "Government Surplus Cars and Trucks at Auction", "cars and trucks", "vehicle", None,
      ["Every car, truck, van and SUV we found on GSA Auctions and eBay Motors, in one list. Bids are placed on the original site, so each button below opens the real listing.",
-      "Prices shown are the last bid seen at the daily update and can change at any time."],
+      "Prices shown are the last bid seen at the latest update and can change at any time."],
      "type=vehicle"),
     ("boats-at-auction", "Boats at Auction: Government Surplus and eBay Motors", "boats", "boat", None,
      ["Federal agencies sell surplus boats and vessels, from small skiffs and patrol boats to larger craft. These listings come from GSA Auctions and eBay Motors.",
@@ -144,6 +144,8 @@ def parse_end(l):
 
 def is_future(l, now):
     d = parse_end(l)
+    if l.get("endAt"):
+        return d > now
     return d == datetime.datetime.max or d.date() >= now.date()
 
 
@@ -233,7 +235,7 @@ def main():
             rows = [l for l in rows if rx.search(l.get("title") or "")]
         n = len(rows)
         title = "%s | Deal1Cars" % h1
-        desc = "%s %s listed now from GSA Auctions and eBay Motors. Updated daily." % (format(n, ","), short.capitalize()) if n else \
+        desc = "%s %s listed now from GSA Auctions and eBay Motors. Updated hourly." % (format(n, ","), short.capitalize()) if n else \
             "Browse %s from GSA Auctions and eBay Motors on Deal1Cars." % short
         path = "/browse/%s.html" % slug
         page(os.path.join(OUT_DIR, slug + ".html"), title, desc, h1, intro, rows, n, home_q, updated,
@@ -250,7 +252,7 @@ def main():
                  "Each button opens the original listing, where you can see photos, pickup location and bid details. Check inspection and pickup rules before you bid."]
         path = "/browse/%s.html" % slug
         page(os.path.join(OUT_DIR, slug + ".html"), "%s | Deal1Cars" % h1,
-             "%d government surplus and eBay Motors auctions in %s: cars, trucks, boats and more. Updated daily." % (len(rows), name),
+             "%d government surplus and eBay Motors auctions in %s: cars, trucks, boats and more. Updated hourly." % (len(rows), name),
              h1, intro, rows, len(rows), "state=%s" % s, updated, type_links + [("/", "All auctions")], path, False)
         written.append(path)
 
