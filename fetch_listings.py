@@ -62,6 +62,12 @@ def norm_state(v):
     return STATE_ABBR.get(re.sub(r"\s+", " ", t).lower(), "")
 
 
+def zip3(v):
+    """eBay often masks the ZIP (e.g. '945**'). Keep the first 3 digits, which still means a region."""
+    m = re.match(r"^\s*(\d{3})", str(v or ""))
+    return m.group(1) if m else ""
+
+
 def zip5(v):
     m = re.match(r"^\s*(\d{5})(?:-\d{4})?\s*$", str(v or ""))
     return m.group(1) if m else ""
@@ -212,6 +218,7 @@ def transform_ebay(resp):
             "endDate": (it.get("itemEndDate") or "")[:10] or None,
             "endAt": it.get("itemEndDate") or None,
             "zip": zip5(loc.get("postalCode")),
+            "zip3": zip3(loc.get("postalCode")),
             "city": (loc.get("city") or "").strip(),
             "state": norm_state(loc.get("stateOrProvince")),
             "image": ((it.get("image") or {}).get("imageUrl") or ""),
@@ -245,6 +252,8 @@ def fetch_ebay(client_id, secret, campaign):
         params = urllib.parse.urlencode({"category_ids": "6001", "filter": "buyingOptions:{AUCTION}",
                                          "sort": "endingSoonest", "limit": "50", "offset": str(offset)})
         resp = http_json("https://api.ebay.com/buy/browse/v1/item_summary/search?" + params, headers)
+        if offset == 0:
+            log("eBay sample locations: %r" % [(it.get("itemLocation") or {}) for it in ((resp or {}).get("itemSummaries") or [])[:4]])
         page = transform_ebay(resp)
         items.extend(page)
         if len((resp or {}).get("itemSummaries") or []) < 50:
@@ -306,6 +315,36 @@ def geocode(listings):
             c = cache.get(ckey(l))
             if c:
                 l["lat"], l["lon"] = c
+    # last resort: only a 3-digit ZIP prefix is known. Look up a real ZIP that starts with it (about 30-60 mile accuracy).
+    def z3key(l):
+        return ("z3:" + l["zip3"]) if l.get("zip3") and "lat" not in l else ""
+    need_z = sorted({z3key(l) for l in listings if z3key(l) and z3key(l) not in cache})[:MAX_NEW_GEO]
+    for k in need_z:
+        found = None
+        for tail in ("01", "10", "00", "20", "30", "50"):
+            try:
+                d = http_json("https://api.zippopotam.us/us/" + k[3:] + tail, timeout=20)
+                pl = (d.get("places") or [{}])[0]
+                found = [round(float(pl["latitude"]), 3), round(float(pl["longitude"]), 3), (pl.get("state abbreviation") or "")]
+                break
+            except urllib.error.HTTPError as e:
+                if e.code != 404:
+                    break
+            except Exception:
+                break
+            time.sleep(0.1)
+        if found:
+            cache[k] = found
+        done += 1
+    for l in listings:
+        if z3key(l):
+            c = cache.get(z3key(l))
+            if c:
+                l["lat"], l["lon"] = c[0], c[1]
+                if not l.get("state") and len(c) > 2 and c[2]:
+                    l["state"] = c[2]
+    n_ebay = [x for x in listings if x.get("source") == "ebay"]
+    log("Locations: %d of %d eBay listings have coordinates." % (sum(1 for x in n_ebay if "lat" in x), len(n_ebay)))
     try:
         with open(GEO_FILE, "w", encoding="utf-8") as f:
             json.dump(cache, f, separators=(",", ":"), sort_keys=True)
