@@ -53,9 +53,9 @@ a { color: var(--accent); }
 .wrap { max-width: 1160px; margin: 0 auto; padding: 14px 16px 48px; }
 
 /* site bar */
-.sitebar { display: flex; align-items: center; gap: 6px 18px; flex-wrap: wrap; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 8px 12px; box-shadow: var(--shadow); }
-.sitebar .brand { display: flex; align-items: center; gap: 8px; font-family: var(--font-display); font-weight: 700; font-size: 18px; color: var(--fg); text-decoration: none; margin-right: auto; }
-.sitebar .brand img { width: 28px; height: 28px; display: block; }
+.sitebar { display: flex; align-items: center; gap: 6px 18px; flex-wrap: wrap; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 10px 14px; box-shadow: var(--shadow); }
+.sitebar .brand { display: flex; align-items: center; gap: 12px; font-family: var(--font-display); font-weight: 700; font-size: 24px; letter-spacing: -.01em; color: var(--fg); text-decoration: none; margin-right: auto; }
+.sitebar .brand img { width: 50px; height: 50px; display: block; border-radius: 12px; }
 .sitebar nav { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; }
 .sitebar nav a { text-decoration: none; font-size: 14px; font-weight: 500; color: var(--muted); padding: 7px 11px; border-radius: 8px; }
 .sitebar nav a:hover { color: var(--fg); background: var(--bg); }
@@ -63,11 +63,14 @@ a { color: var(--accent); }
 .sitebar nav .sep { width: 1px; height: 20px; background: var(--line); margin: 0 4px; }
 
 /* hero */
-.hero { margin-top: 14px; border-radius: 18px; padding: 34px 22px 82px; color: var(--hero-fg); background: radial-gradient(900px 300px at 85% -20%, rgba(255,255,255,.14), transparent 60%), linear-gradient(135deg, var(--hero-a), var(--hero-b)); }
-.hero h1 { font-family: var(--font-display); font-size: clamp(28px, 5vw, 46px); line-height: 1.08; margin: 0 0 10px; max-width: 18ch; text-wrap: balance; }
+.hero { margin-top: 14px; border-radius: 20px; padding: 40px 28px 36px; position: relative; overflow: hidden; color: var(--hero-fg); background: radial-gradient(900px 300px at 85% -20%, rgba(255,255,255,.14), transparent 60%), linear-gradient(135deg, var(--hero-a), var(--hero-b)); }
+.hero::after { content: ""; position: absolute; right: -60px; bottom: -90px; width: 320px; height: 320px; border-radius: 50%; border: 44px solid rgba(255,255,255,.06); pointer-events: none; }
+.hero h1 { font-family: var(--font-display); font-size: clamp(30px, 5.5vw, 52px); line-height: 1.05; margin: 0 0 12px; max-width: 16ch; text-wrap: balance; letter-spacing: -.015em; }
+.pills { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; position: relative; }
+.pills span { font-size: 13px; font-weight: 600; padding: 6px 12px; border-radius: 99px; background: rgba(255,255,255,.14); color: var(--hero-fg); border: 1px solid rgba(255,255,255,.18); }
 .hero p { margin: 0; color: var(--hero-muted); max-width: 60ch; font-size: 16px; }
 
-.panel { position: relative; margin: -58px 12px 0; background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 16px; box-shadow: var(--shadow-up); }
+.panel { position: relative; margin: 22px 0 0; background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 16px; box-shadow: var(--shadow-up); }
 .row { display: grid; gap: 10px; }
 .row.r1 { grid-template-columns: 2fr 1fr 1fr auto; align-items: end; }
 .row.r3 { grid-template-columns: repeat(4, 1fr); margin-top: 12px; }
@@ -85,6 +88,12 @@ a { color: var(--accent); }
 .chip[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--accent-fg); }
 .chip small { opacity: .75; margin-left: 4px; }
 
+.featured { margin-top: 22px; }
+.fhead { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin: 0 4px 12px; }
+.fhead h2 { font-family: var(--font-display); font-size: 22px; margin: 0; }
+.fhead a { font-size: 14px; font-weight: 600; text-decoration: none; }
+.fgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(255px, 1fr)); gap: 16px; }
+.fgrid .card:nth-child(n+5) { display: none; }
 .ad { margin: 20px 0; min-height: 90px; display: flex; align-items: center; justify-content: center; border: 1px dashed var(--line); border-radius: 10px; color: var(--muted); font-size: 12px; }
 .status { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 6px 16px; margin: 18px 4px 12px; color: var(--muted); font-size: 13px; }
 .status strong { color: var(--fg); font-size: 15px; }
@@ -133,14 +142,22 @@ a { color: var(--accent); }
 footer { margin-top: 28px; font-size: 12.5px; color: var(--muted); max-width: 90ch; }
 
 @media (max-width: 860px) { .row.r1 { grid-template-columns: 1fr 1fr; } .row.r1 .kw { grid-column: 1 / -1; } .row.r3 { grid-template-columns: 1fr 1fr; } }
-@media (max-width: 480px) { .panel { margin: -58px 0 0; } .row.r1 { grid-template-columns: 1fr; } .hero { padding: 26px 16px 78px; } }
+@media (max-width: 640px) {
+  .sitebar nav { display: none; }
+  .sitebar { justify-content: center; padding: 14px; }
+  .sitebar .brand { margin: 0; font-size: 30px; gap: 14px; }
+  .sitebar .brand img { width: 64px; height: 64px; border-radius: 16px; }
+  .fgrid { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 12px; padding-bottom: 8px; margin: 0 -16px; padding-left: 16px; padding-right: 16px; }
+  .fgrid .card { flex: 0 0 78%; scroll-snap-align: start; }
+}
+@media (max-width: 480px) { .row.r1 { grid-template-columns: 1fr; } .hero { padding: 28px 18px 26px; } }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
 </style>
 </head>
 <body>
 <div class="wrap">
   <div class="sitebar">
-    <a class="brand" href="/"><img src="favicon.svg" alt="" width="28" height="28">Deal1Cars</a>
+    <a class="brand" href="/"><img src="favicon.svg" alt="" width="50" height="50">Deal1Cars</a>
     <nav aria-label="Main">
       <a class="primary" href="/" aria-current="page">Auctions</a>
       <span class="sep" aria-hidden="true"></span>
@@ -153,9 +170,15 @@ footer { margin-top: 28px; font-size: 12.5px; color: var(--muted); max-width: 90
   <section class="hero">
     <h1>Find your next vehicle or boat at auction</h1>
     <p>Government surplus (GSA Auctions) and eBay Motors listings in one searchable place, refreshed daily. Every listing opens on the original site, where you bid.</p>
+    <div class="pills" id="pills"><span>GSA Auctions</span><span>eBay Motors</span><span>Updated daily</span></div>
   </section>
 
-  <section class="panel" aria-label="Search listings">
+  <section class="featured" id="featured" aria-label="Ending soon" hidden>
+    <div class="fhead"><h2>Ending soon</h2><a href="#find">Search all listings &darr;</a></div>
+    <div class="fgrid" id="fgrid"></div>
+  </section>
+
+  <section class="panel" id="find" aria-label="Search listings">
     <div class="row r1">
       <div class="kw"><label for="q">Search</label><input id="q" type="search" placeholder="Make, model, year, keyword" autocomplete="off"></div>
       <div><label for="zip">Near ZIP code</label><input id="zip" type="text" inputmode="numeric" maxlength="5" placeholder="e.g. 90210" autocomplete="postal-code"></div>
@@ -184,7 +207,7 @@ footer { margin-top: 28px; font-size: 12.5px; color: var(--muted); max-width: 90
 
   <section class="browse" aria-label="Browse by type and state">
     <h2>Browse by type and state</h2>
-    <ul><!--BROWSE-LINKS--><li><a href="/browse/government-surplus-trucks.html">Government Surplus Trucks</a></li><li><a href="/browse/government-surplus-suvs-and-vans.html">Government Surplus SUVs and Vans</a></li><li><a href="/browse/government-surplus-cars-and-trucks.html">Government Surplus Cars and Trucks</a></li><li><a href="/browse/boats-at-auction.html">Boats</a></li><li><a href="/browse/trailers-at-auction.html">Trailers</a></li><li><a href="/browse/motorcycles-and-atvs-at-auction.html">Motorcycles, ATVs and UTVs</a></li><li><a href="/browse/rvs-and-motorhomes-at-auction.html">RVs and Motorhomes</a></li><li><a href="/browse/heavy-equipment-at-auction.html">Heavy Equipment</a></li><li><a href="/browse/government-surplus-vehicles-alabama.html">Alabama (7)</a></li><li><a href="/browse/government-surplus-vehicles-arizona.html">Arizona (9)</a></li><li><a href="/browse/government-surplus-vehicles-arkansas.html">Arkansas (4)</a></li><li><a href="/browse/government-surplus-vehicles-california.html">California (18)</a></li><li><a href="/browse/government-surplus-vehicles-colorado.html">Colorado (16)</a></li><li><a href="/browse/government-surplus-vehicles-georgia.html">Georgia (10)</a></li><li><a href="/browse/government-surplus-vehicles-maine.html">Maine (7)</a></li><li><a href="/browse/government-surplus-vehicles-michigan.html">Michigan (10)</a></li><li><a href="/browse/government-surplus-vehicles-mississippi.html">Mississippi (9)</a></li><li><a href="/browse/government-surplus-vehicles-missouri.html">Missouri (3)</a></li><li><a href="/browse/government-surplus-vehicles-new-jersey.html">New Jersey (3)</a></li><li><a href="/browse/government-surplus-vehicles-new-mexico.html">New Mexico (5)</a></li><li><a href="/browse/government-surplus-vehicles-north-carolina.html">North Carolina (12)</a></li><li><a href="/browse/government-surplus-vehicles-oklahoma.html">Oklahoma (5)</a></li><li><a href="/browse/government-surplus-vehicles-oregon.html">Oregon (8)</a></li><li><a href="/browse/government-surplus-vehicles-pennsylvania.html">Pennsylvania (10)</a></li><li><a href="/browse/government-surplus-vehicles-puerto-rico.html">Puerto Rico (3)</a></li><li><a href="/browse/government-surplus-vehicles-south-carolina.html">South Carolina (6)</a></li><li><a href="/browse/government-surplus-vehicles-south-dakota.html">South Dakota (3)</a></li><li><a href="/browse/government-surplus-vehicles-texas.html">Texas (8)</a></li><li><a href="/browse/government-surplus-vehicles-utah.html">Utah (19)</a></li><li><a href="/browse/government-surplus-vehicles-washington.html">Washington (11)</a></li><li><a href="/browse/government-surplus-vehicles-wisconsin.html">Wisconsin (12)</a></li><li><a href="/browse/government-surplus-vehicles-wyoming.html">Wyoming (3)</a></li><!--/BROWSE-LINKS--></ul>
+    <ul><!--BROWSE-LINKS--><li><a href="/browse/government-surplus-trucks.html">Trucks</a></li><li><a href="/browse/government-surplus-suvs-and-vans.html">SUVs and vans</a></li><li><a href="/browse/government-surplus-cars-and-trucks.html">Cars and trucks</a></li><li><a href="/browse/boats-at-auction.html">Boats</a></li><li><a href="/browse/trailers-at-auction.html">Trailers</a></li><li><a href="/browse/motorcycles-and-atvs-at-auction.html">Motorcycles and ATVs</a></li><li><a href="/browse/rvs-and-motorhomes-at-auction.html">RVs and motorhomes</a></li><li><a href="/browse/heavy-equipment-at-auction.html">Heavy equipment</a></li><!--/BROWSE-LINKS--></ul>
   </section>
 
   <section class="tools" aria-label="Free tools">
@@ -240,6 +263,13 @@ footer { margin-top: 28px; font-size: 12.5px; color: var(--muted); max-width: 90
     return 3958.8 * 2 * Math.atan2(Math.sqrt(h), Math.sqrt(1 - h));
   }
 
+  var ABBR = {"alabama":"AL","alaska":"AK","arizona":"AZ","arkansas":"AR","california":"CA","colorado":"CO","connecticut":"CT","delaware":"DE","district of columbia":"DC","washington dc":"DC","florida":"FL","georgia":"GA","hawaii":"HI","idaho":"ID","illinois":"IL","indiana":"IN","iowa":"IA","kansas":"KS","kentucky":"KY","louisiana":"LA","maine":"ME","maryland":"MD","massachusetts":"MA","michigan":"MI","minnesota":"MN","mississippi":"MS","missouri":"MO","montana":"MT","nebraska":"NE","nevada":"NV","new hampshire":"NH","new jersey":"NJ","new mexico":"NM","new york":"NY","north carolina":"NC","north dakota":"ND","ohio":"OH","oklahoma":"OK","oregon":"OR","pennsylvania":"PA","rhode island":"RI","south carolina":"SC","south dakota":"SD","tennessee":"TN","texas":"TX","utah":"UT","vermont":"VT","virginia":"VA","washington":"WA","west virginia":"WV","wisconsin":"WI","wyoming":"WY","puerto rico":"PR","guam":"GU"};
+  function normState(v) {
+    var t = String(v || "").replace(/[^A-Za-z ]/g, "").replace(/\s+/g, " ").trim();
+    if (/^[A-Za-z]{2}$/.test(t)) return t.toUpperCase();
+    return ABBR[t.toLowerCase()] || "";
+  }
+
   function filtered() {
     var q = $("q").value.trim().toLowerCase(), src = $("src").value, st = $("st").value;
     var max = parseFloat($("max").value), rad = parseFloat($("rad").value), sort = $("sort").value;
@@ -286,6 +316,53 @@ footer { margin-top: 28px; font-size: 12.5px; color: var(--muted); max-width: 90
     });
   }
 
+  function buildCard(l) {
+    {
+      var c = el("article", "card"), th = el("div", "thumb"), img = safeUrl(l.image);
+      if (img) {
+        var im = document.createElement("img"); im.loading = "lazy"; im.alt = l.title; im.referrerPolicy = "no-referrer"; im.src = img;
+        im.onerror = function () { im.remove(); th.insertBefore(document.createTextNode("No photo"), th.firstChild); };
+        th.appendChild(im);
+      } else th.appendChild(document.createTextNode("No photo"));
+      th.appendChild(el("span", "badge " + (l.source === "ebay" ? "ebay" : "gsa"), SRC[l.source] || l.source));
+      th.appendChild(el("span", "cat", CATNAME[catOf(l)] || "Vehicle"));
+      c.appendChild(th);
+      var b = el("div", "body");
+      b.appendChild(el("h2", null, l.title));
+      var p = el("div", "price");
+      if (l.price != null) { p.appendChild(document.createTextNode(money(l.price) + " ")); p.appendChild(el("small", null, l.bids ? "current bid \u00b7 " + l.bids + " bid" + (l.bids === 1 ? "" : "s") : "current bid")); }
+      else p.appendChild(el("small", null, "No bids yet"));
+      b.appendChild(p);
+      var loc = [l.city, l.state].filter(Boolean).join(", ");
+      if (loc || l._mi != null) {
+        var m = el("div", "meta"); m.appendChild(el("span", null, "\ud83d\udccd " + (loc || "Location listed on source")));
+        if (l._mi != null) m.appendChild(el("b", null, "\u00b7 " + Math.round(l._mi).toLocaleString("en-US") + " mi"));
+        b.appendChild(m);
+      }
+      var e = endInfo(l); b.appendChild(el("div", "meta" + (e.soon ? " soon" : ""), e.t));
+      if (l.seller) b.appendChild(el("div", "meta", l.seller));
+      var a = el("a", "view"), u = safeUrl(l.url);
+      a.appendChild(el("span", null, "View on " + (SRC[l.source] || "source site") + " \u2197"));
+      if (u) { a.href = u; a.target = "_blank"; a.rel = "noopener noreferrer" + (l.source === "ebay" ? " sponsored" : ""); }
+      b.appendChild(a); c.appendChild(b);
+      return c;
+    }
+  }
+
+  function drawFeatured() {
+    var now = Date.now();
+    var live = all.filter(function (l) { var d = endDate(l); return safeUrl(l.url) && (!d || d.getTime() > now); });
+    live.sort(function (a, b) { var da = endDate(a), db = endDate(b); return (da ? da.getTime() : 9e15) - (db ? db.getTime() : 9e15); });
+    var withImg = live.filter(function (l) { return safeUrl(l.image); });
+    var pool = withImg.length >= 4 ? withImg : live, pick = [];
+    ["gsa", "ebay"].forEach(function (src) { pool.filter(function (l) { return l.source === src; }).slice(0, 2).forEach(function (l) { pick.push(l); }); });
+    pool.forEach(function (l) { if (pick.length < 4 && pick.indexOf(l) < 0) pick.push(l); });
+    if (!pick.length) return;
+    var g = $("fgrid"); g.textContent = "";
+    pick.slice(0, 4).forEach(function (l) { l._mi = null; g.appendChild(buildCard(l)); });
+    $("featured").hidden = false;
+  }
+
   function render() {
     out.textContent = "";
     if (!all.length) return;
@@ -301,35 +378,7 @@ footer { margin-top: 28px; font-size: 12.5px; color: var(--muted); max-width: 90
       out.appendChild(none); return;
     }
     var grid = el("div", "grid");
-    rows.slice(0, shown).forEach(function (l) {
-      var c = el("article", "card"), th = el("div", "thumb"), img = safeUrl(l.image);
-      if (img) {
-        var im = document.createElement("img"); im.loading = "lazy"; im.alt = l.title; im.referrerPolicy = "no-referrer"; im.src = img;
-        im.onerror = function () { im.remove(); th.insertBefore(document.createTextNode("No photo"), th.firstChild); };
-        th.appendChild(im);
-      } else th.appendChild(document.createTextNode("No photo"));
-      th.appendChild(el("span", "badge " + (l.source === "ebay" ? "ebay" : "gsa"), SRC[l.source] || l.source));
-      th.appendChild(el("span", "cat", CATNAME[catOf(l)] || "Vehicle"));
-      c.appendChild(th);
-      var b = el("div", "body");
-      b.appendChild(el("h2", null, l.title));
-      var p = el("div", "price");
-      if (l.price != null) { p.appendChild(document.createTextNode(money(l.price) + " ")); p.appendChild(el("small", null, l.bids ? "current bid · " + l.bids + " bid" + (l.bids === 1 ? "" : "s") : "current bid")); }
-      else p.appendChild(el("small", null, "No bids yet"));
-      b.appendChild(p);
-      var loc = [l.city, l.state].filter(Boolean).join(", ");
-      if (loc || l._mi != null) {
-        var m = el("div", "meta"); m.appendChild(el("span", null, "📍 " + (loc || "Location listed on source")));
-        if (l._mi != null) m.appendChild(el("b", null, "· " + Math.round(l._mi).toLocaleString("en-US") + " mi"));
-        b.appendChild(m);
-      }
-      var e = endInfo(l); b.appendChild(el("div", "meta" + (e.soon ? " soon" : ""), e.t));
-      if (l.seller) b.appendChild(el("div", "meta", l.seller));
-      var a = el("a", "view"), u = safeUrl(l.url);
-      a.appendChild(el("span", null, "View on " + (SRC[l.source] || "source site") + " ↗"));
-      if (u) { a.href = u; a.target = "_blank"; a.rel = "noopener noreferrer" + (l.source === "ebay" ? " sponsored" : ""); }
-      b.appendChild(a); c.appendChild(b); grid.appendChild(c);
-    });
+    rows.slice(0, shown).forEach(function (l) { grid.appendChild(buildCard(l)); });
     out.appendChild(grid);
     if (rows.length > shown) {
       var mb = el("button", "more", "Show more (" + (rows.length - shown) + " left)"); mb.type = "button";
@@ -375,6 +424,7 @@ footer { margin-top: 28px; font-size: 12.5px; color: var(--muted); max-width: 90
     all = (data && Array.isArray(data.listings)) ? data.listings.filter(function (l) { return l && l.title; }) : [];
     if (data && data.updated) { var d = new Date(data.updated); if (!isNaN(d)) $("updated").textContent = "Updated " + d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }); }
     if (data && data.affiliate) $("affnote").hidden = false;
+    all.forEach(function (l) { l.state = normState(l.state); });
     if (!all.length) { showEmpty(); return; }
     var states = {}; all.forEach(function (l) { if (l.state) states[l.state] = 1; });
     Object.keys(states).sort().forEach(function (s) { var o = document.createElement("option"); o.value = s; o.textContent = s; $("st").appendChild(o); });
@@ -389,7 +439,7 @@ footer { margin-top: 28px; font-size: 12.5px; color: var(--muted); max-width: 90
       var t = qs.get("type"); if (t && CATNAME[t]) cat = t;
       var stq = (qs.get("state") || "").toUpperCase(); if (stq && states[stq]) $("st").value = stq;
     } catch (e) {}
-    drawChips(); render();
+    drawChips(); drawFeatured(); render();
   }
 
   fetch("listings.json", { cache: "no-cache" }).then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); }).then(init).catch(function () {

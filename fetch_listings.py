@@ -51,6 +51,17 @@ EQUIP_RE = word_re(EQUIP.split())
 YEAR_RE = re.compile(r"\b(19[5-9]\d|20[0-3]\d)\b")
 
 
+STATE_ABBR = {n.rsplit(" ", 1)[0].lower(): n.rsplit(" ", 1)[1] for n in "Alabama AL|Alaska AK|Arizona AZ|Arkansas AR|California CA|Colorado CO|Connecticut CT|Delaware DE|District of Columbia DC|Washington DC DC|Florida FL|Georgia GA|Hawaii HI|Idaho ID|Illinois IL|Indiana IN|Iowa IA|Kansas KS|Kentucky KY|Louisiana LA|Maine ME|Maryland MD|Massachusetts MA|Michigan MI|Minnesota MN|Mississippi MS|Missouri MO|Montana MT|Nebraska NE|Nevada NV|New Hampshire NH|New Jersey NJ|New Mexico NM|New York NY|North Carolina NC|North Dakota ND|Ohio OH|Oklahoma OK|Oregon OR|Pennsylvania PA|Rhode Island RI|South Carolina SC|South Dakota SD|Tennessee TN|Texas TX|Utah UT|Vermont VT|Virginia VA|Washington WA|West Virginia WV|Wisconsin WI|Wyoming WY|Puerto Rico PR|Guam GU".split("|")}
+
+
+def norm_state(v):
+    """eBay gives 'California' or 'CA' (sometimes in other forms). Return a 2-letter US code, or ''."""
+    t = re.sub(r"[^A-Za-z ]", "", str(v or "")).strip()
+    if re.fullmatch(r"[A-Za-z]{2}", t):
+        return t.upper()
+    return STATE_ABBR.get(re.sub(r"\s+", " ", t).lower(), "")
+
+
 def zip5(v):
     m = re.match(r"^\s*(\d{5})(?:-\d{4})?\s*$", str(v or ""))
     return m.group(1) if m else ""
@@ -157,7 +168,7 @@ def transform_gsa(results, today):
             "endAt": None,
             "zip": zip5(r.get("propertyzip") or r.get("locationzip")),
             "city": nice_title(city) if city else "",
-            "state": state,
+            "state": norm_state(state) or state[:2],
             "image": image,
             "url": url,
             "desc": desc[:160],
@@ -202,7 +213,7 @@ def transform_ebay(resp):
             "endAt": it.get("itemEndDate") or None,
             "zip": zip5(loc.get("postalCode")),
             "city": (loc.get("city") or "").strip(),
-            "state": (loc.get("stateOrProvince") or "").strip().upper()[:2],
+            "state": norm_state(loc.get("stateOrProvince")),
             "image": ((it.get("image") or {}).get("imageUrl") or ""),
             "url": url,
             "desc": (it.get("shortDescription") or "")[:160],
@@ -258,7 +269,7 @@ def geocode(listings):
         try:
             d = http_json("https://api.zippopotam.us/us/" + z, timeout=20)
             pl = (d.get("places") or [{}])[0]
-            cache[z] = [round(float(pl["latitude"]), 3), round(float(pl["longitude"]), 3)]
+            cache[z] = [round(float(pl["latitude"]), 3), round(float(pl["longitude"]), 3), (pl.get("state abbreviation") or "")]
         except urllib.error.HTTPError as e:
             if e.code == 404:
                 cache[z] = None  # not a real ZIP, do not ask again
@@ -269,7 +280,9 @@ def geocode(listings):
     for l in listings:
         c = cache.get(l.get("zip") or "")
         if c:
-            l["lat"], l["lon"] = c
+            l["lat"], l["lon"] = c[0], c[1]
+            if not l.get("state") and len(c) > 2 and c[2]:
+                l["state"] = c[2]
     # listings with no usable ZIP (eBay often hides it): fall back to city + state
     def ckey(l):
         city, st = (l.get("city") or "").strip().lower(), (l.get("state") or "").strip().upper()

@@ -77,9 +77,9 @@ html{color-scheme:light dark}*{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.55 var(--font-body)}
 a{color:var(--accent)}:focus-visible{outline:3px solid var(--hi);outline-offset:2px}
 .wrap{max-width:1160px;margin:0 auto;padding:14px 16px 48px}
-.sitebar{display:flex;align-items:center;gap:6px 18px;flex-wrap:wrap;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:8px 12px;margin-bottom:20px;box-shadow:var(--shadow)}
-.sitebar .brand{display:flex;align-items:center;gap:8px;font-family:var(--font-display);font-weight:700;font-size:18px;color:var(--fg);text-decoration:none;margin-right:auto}
-.sitebar .brand img{width:28px;height:28px;display:block}
+.sitebar{display:flex;align-items:center;gap:6px 18px;flex-wrap:wrap;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:10px 14px;margin-bottom:20px;box-shadow:var(--shadow)}
+.sitebar .brand{display:flex;align-items:center;gap:12px;font-family:var(--font-display);font-weight:700;font-size:24px;color:var(--fg);text-decoration:none;margin-right:auto}
+.sitebar .brand img{width:50px;height:50px;display:block;border-radius:12px}
 .sitebar nav{display:flex;flex-wrap:wrap;align-items:center;gap:4px}
 .sitebar nav a{text-decoration:none;font-size:14px;font-weight:500;color:var(--muted);padding:7px 11px;border-radius:8px}
 .sitebar nav a:hover{color:var(--fg);background:var(--bg)}
@@ -108,13 +108,15 @@ h1{font-family:var(--font-display);font-size:clamp(26px,4.5vw,40px);line-height:
 .links a{display:inline-block;padding:7px 13px;border:1px solid var(--line);border-radius:99px;background:var(--surface);text-decoration:none;font-size:14px;color:var(--fg)}
 .links a:hover{border-color:var(--accent)}
 footer{margin-top:28px;font-size:12.5px;color:var(--muted);max-width:90ch}
+@media(max-width:640px){.sitebar nav{display:none}.sitebar{justify-content:center;padding:14px}.sitebar .brand{margin:0;font-size:30px;gap:14px}.sitebar .brand img{width:64px;height:64px;border-radius:16px}.mobnav{display:flex!important}}
+.mobnav{display:none;flex-wrap:wrap;justify-content:center;gap:8px 16px;margin:26px 0 8px;font-size:14px}.mobnav a{color:var(--accent);font-weight:600;text-decoration:none}
 """
 
 HEAD_LINKS = ('<link rel="icon" href="/favicon.ico" sizes="48x48"><link rel="icon" href="/favicon.svg" type="image/svg+xml">'
               '<link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="preconnect" href="https://fonts.googleapis.com">'
               '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Inter:wght@400;500;600&display=swap">')
 
-BAR = ('<div class="sitebar"><a class="brand" href="/"><img src="/favicon.svg" alt="" width="28" height="28">Deal1Cars</a>'
+BAR = ('<div class="sitebar"><a class="brand" href="/"><img src="/favicon.svg" alt="" width="50" height="50">Deal1Cars</a>'
        '<nav aria-label="Main"><a class="primary" href="/">Auctions</a><span class="sep" aria-hidden="true"></span>'
        '<a href="/auto-loan-calculator.html">Loan Calculator</a><a href="/tax-return.html">Tax Estimate</a>'
        '<a href="/scientific-calculator.html">Scientific</a></nav></div>')
@@ -183,7 +185,7 @@ def page(path, title, desc, h1, intro, rows, total, home_q, updated, extra_links
            '<!-- AD SPACE: bottom banner. Paste your ad code inside this div. --><div class="ad ad-bottom" aria-label="Advertisement">Ad space</div>'
            '<section class="links"><h2>More ways to browse</h2><ul>%s</ul></section>'
            '<footer>Deal1Cars is an independent site and is not affiliated with GSA, GSA Auctions or eBay. Listing details, prices and end times come from those sites and can change, so confirm on the original listing before you bid. <a href="/privacy-policy.html">Privacy Policy</a></footer>'
-           '</div></body></html>') % (
+           '<div class="mobnav"><a href="/">Auctions</a><a href="/auto-loan-calculator.html">Loan Calculator</a><a href="/tax-return.html">Tax Estimate</a><a href="/scientific-calculator.html">Scientific</a></div></div></body></html>') % (
         HEAD_LINKS, e(title), e(desc), SITE, canonical_path, '<meta name="robots" content="noindex">' if noindex else "",
         e(title), e(desc), SITE, canonical_path, "", CSS, BAR, e(h1.split(":")[0]), e(h1),
         "".join('<p class="lead">%s</p>' % e(p) for p in intro), more, format(total, ","), "" if total == 1 else "s", e(upd), body, links)

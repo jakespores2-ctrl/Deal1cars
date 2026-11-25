@@ -126,21 +126,22 @@ footer a { color: var(--accent); }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
 </style>
 <style id="sitebar-css">
-.sitebar{display:flex;align-items:center;gap:6px 18px;flex-wrap:wrap;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:8px 12px;margin-bottom:20px;box-shadow:0 1px 2px rgba(20,32,43,.06),0 6px 18px rgba(20,32,43,.07)}
-.sitebar .brand{display:flex;align-items:center;gap:8px;font-family:var(--font-display);font-weight:700;font-size:18px;color:var(--fg);text-decoration:none;margin-right:auto}
-.sitebar .brand img{width:28px;height:28px;display:block}
+.sitebar{display:flex;align-items:center;gap:6px 18px;flex-wrap:wrap;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:10px 14px;margin-bottom:20px;box-shadow:0 1px 2px rgba(20,32,43,.06),0 6px 18px rgba(20,32,43,.07)}
+.sitebar .brand{display:flex;align-items:center;gap:12px;font-family:var(--font-display);font-weight:700;font-size:24px;color:var(--fg);text-decoration:none;margin-right:auto}
+.sitebar .brand img{width:50px;height:50px;display:block;border-radius:12px}
 .sitebar nav{display:flex;flex-wrap:wrap;align-items:center;gap:4px}
 .sitebar nav a{text-decoration:none;font-size:14px;font-weight:500;color:var(--muted);padding:7px 11px;border-radius:8px}
 .sitebar nav a:hover{color:var(--fg);background:var(--bg)}
 .sitebar nav a.primary{background:var(--accent);color:var(--accent-fg,#fff);font-weight:600}
 .sitebar nav a[aria-current]:not(.primary){color:var(--fg);background:var(--bg)}
 .sitebar nav .sep{width:1px;height:20px;background:var(--line);margin:0 4px}
-</style>
+@media(max-width:640px){.sitebar nav{display:none}.sitebar{justify-content:center;padding:14px}.sitebar .brand{margin:0;font-size:30px;gap:14px}.sitebar .brand img{width:64px;height:64px;border-radius:16px}.mobnav{display:flex!important}}
+.mobnav{display:none;flex-wrap:wrap;justify-content:center;gap:8px 16px;margin:26px 0 8px;font-size:14px}.mobnav a{color:var(--accent);font-weight:600;text-decoration:none}</style>
 </head>
 <body>
 <div class="wrap">
   <div class="sitebar">
-    <a class="brand" href="/"><img src="favicon.svg" alt="" width="28" height="28">Deal1Cars</a>
+    <a class="brand" href="/"><img src="favicon.svg" alt="" width="50" height="50">Deal1Cars</a>
     <nav aria-label="Main">
       <a class="primary" href="/">Auctions</a>
       <span class="sep" aria-hidden="true"></span>
@@ -376,5 +377,6 @@ footer a { color: var(--accent); }
   render();
 })();
 </script>
+<div class="mobnav"><a href="/">Auctions</a><a href="/auto-loan-calculator.html">Loan Calculator</a><a href="/tax-return.html">Tax Estimate</a><a href="/scientific-calculator.html">Scientific</a></div>
 </body>
 </html>
