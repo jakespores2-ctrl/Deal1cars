@@ -1,0 +1,492 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="favicon.ico" sizes="48x48">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<title>Deal1Cars: Government and eBay Car, Truck and Boat Auctions</title>
+<meta name="description" content="Deal1Cars lists cars, trucks, boats and trailers from government surplus auctions (GSA Auctions) and eBay Motors. Search by type, state, price or distance from your ZIP code. Updated hourly.">
+<link rel="canonical" href="https://deal1cars.com/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Deal1Cars: Government and eBay Motors vehicle and boat auctions">
+<meta property="og:description" content="Search vehicles and boats from GSA Auctions and eBay Motors in one place, updated hourly.">
+<meta property="og:url" content="https://deal1cars.com/">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"Deal1Cars","alternateName":["Deal 1 Cars","deal1cars.com"],"url":"https://deal1cars.com/","description":"Vehicle and boat auction listings from GSA Auctions and eBay Motors, with free car calculators."}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Inter:wght@400;500;600&display=swap">
+<style>
+:root {
+  --bg: #f1f4f6; --surface: #ffffff; --fg: #14202b; --muted: #566878; --line: #d8e0e6;
+  --accent: #0b6b63; --accent-fg: #ffffff; --soft: #e1f0ee; --hi: #a8520a; --warn: #9a3412;
+  --hero-a: #0a4f49; --hero-b: #0f766d; --hero-fg: #ffffff; --hero-muted: #cfe9e6;
+  --dealer: #7a4a00; --dealer-bg: #fdf0d5; --gsa: #1d4f91; --gsa-bg: #e3edf9; --ebay: #8a2b6b; --ebay-bg: #f8e6f1;
+  --shadow: 0 1px 2px rgba(20,32,43,.06), 0 6px 18px rgba(20,32,43,.07);
+  --shadow-up: 0 2px 4px rgba(20,32,43,.08), 0 12px 28px rgba(20,32,43,.14);
+  --font-display: "Bricolage Grotesque", "Helvetica Neue", Arial, sans-serif;
+  --font-body: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0e151b; --surface: #161f27; --fg: #e8eef3; --muted: #94a5b4; --line: #26333f;
+    --accent: #3fc1b2; --accent-fg: #05201d; --soft: #13302e; --hi: #f0a24a; --warn: #f59e6b;
+    --hero-a: #0b2e2b; --hero-b: #114b46; --hero-fg: #f2fbfa; --hero-muted: #a8cfca;
+    --dealer: #f0c46a; --dealer-bg: #3a2a0a; --gsa: #8db8f0; --gsa-bg: #162a45; --ebay: #eba4d2; --ebay-bg: #3a1830;
+    --shadow: 0 1px 2px rgba(0,0,0,.4), 0 6px 18px rgba(0,0,0,.3); --shadow-up: 0 2px 4px rgba(0,0,0,.5), 0 12px 28px rgba(0,0,0,.45);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0e151b; --surface: #161f27; --fg: #e8eef3; --muted: #94a5b4; --line: #26333f;
+  --accent: #3fc1b2; --accent-fg: #05201d; --soft: #13302e; --hi: #f0a24a; --warn: #f59e6b;
+  --hero-a: #0b2e2b; --hero-b: #114b46; --hero-fg: #f2fbfa; --hero-muted: #a8cfca;
+  --dealer: #f0c46a; --dealer-bg: #3a2a0a; --gsa: #8db8f0; --gsa-bg: #162a45; --ebay: #eba4d2; --ebay-bg: #3a1830;
+  --shadow: 0 1px 2px rgba(0,0,0,.4), 0 6px 18px rgba(0,0,0,.3); --shadow-up: 0 2px 4px rgba(0,0,0,.5), 0 12px 28px rgba(0,0,0,.45);
+  color-scheme: dark;
+}
+html { color-scheme: light dark; }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--fg); font: 15px/1.5 var(--font-body); }
+a { color: var(--accent); }
+:focus-visible { outline: 3px solid var(--hi); outline-offset: 2px; }
+.wrap { max-width: 1160px; margin: 0 auto; padding: 14px 16px 48px; }
+
+/* site bar */
+.sitebar { display: flex; align-items: center; gap: 6px 18px; flex-wrap: wrap; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 10px 14px; box-shadow: var(--shadow); }
+.sitebar .brand { display: flex; align-items: center; gap: 12px; font-family: var(--font-display); font-weight: 700; font-size: 24px; letter-spacing: -.01em; color: var(--fg); text-decoration: none; margin-right: auto; }
+.sitebar .brand img { width: 50px; height: 50px; display: block; border-radius: 12px; }
+.sitebar nav { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; }
+.sitebar nav a { text-decoration: none; font-size: 14px; font-weight: 500; color: var(--muted); padding: 7px 11px; border-radius: 8px; }
+.sitebar nav a:hover { color: var(--fg); background: var(--bg); }
+.sitebar nav a.primary { background: var(--accent); color: var(--accent-fg); font-weight: 600; }
+.sitebar nav .sep { width: 1px; height: 20px; background: var(--line); margin: 0 4px; }
+
+/* hero */
+.hero { margin-top: 14px; border-radius: 20px; padding: 40px 28px 36px; position: relative; overflow: hidden; color: var(--hero-fg); background: radial-gradient(900px 300px at 85% -20%, rgba(255,255,255,.14), transparent 60%), linear-gradient(135deg, var(--hero-a), var(--hero-b)); }
+.hero::after { content: ""; position: absolute; right: -60px; bottom: -90px; width: 320px; height: 320px; border-radius: 50%; border: 44px solid rgba(255,255,255,.06); pointer-events: none; }
+.hero h1 { font-family: var(--font-display); font-size: clamp(30px, 5.5vw, 52px); line-height: 1.05; margin: 0 0 12px; max-width: 16ch; text-wrap: balance; letter-spacing: -.015em; }
+.pills { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; position: relative; }
+.pills span { font-size: 13px; font-weight: 600; padding: 6px 12px; border-radius: 99px; background: rgba(255,255,255,.14); color: var(--hero-fg); border: 1px solid rgba(255,255,255,.18); }
+.hero p { margin: 0; color: var(--hero-muted); max-width: 60ch; font-size: 16px; }
+
+.panel { position: relative; margin: 22px 0 0; background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 16px; box-shadow: var(--shadow-up); }
+.row { display: grid; gap: 10px; }
+.row.r1 { grid-template-columns: 2fr 1fr 1fr auto; align-items: end; }
+.row.r3 { grid-template-columns: repeat(4, 1fr); margin-top: 12px; }
+.panel label { display: block; font-size: 11.5px; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
+.panel input, .panel select { width: 100%; min-width: 0; font: inherit; color: var(--fg); background: var(--bg); border: 1px solid var(--line); border-radius: 10px; padding: 10px 11px; }
+.panel input:focus, .panel select:focus { border-color: var(--accent); }
+.btn { font: inherit; font-weight: 600; font-size: 14px; border: 1px solid var(--accent); background: transparent; color: var(--accent); border-radius: 10px; padding: 10px 14px; cursor: pointer; white-space: nowrap; }
+.btn:hover { background: var(--accent); color: var(--accent-fg); }
+.btn.solid { background: var(--accent); color: var(--accent-fg); }
+.resetrow { display: flex; justify-content: flex-end; margin-top: 12px; }
+.btn:disabled { opacity: .6; cursor: default; }
+.area-note { font-size: 12.5px; color: var(--muted); margin-top: 6px; min-height: 18px; }
+.area-note.err { color: var(--warn); }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+.chip { font: inherit; font-size: 13.5px; font-weight: 500; padding: 7px 13px; border-radius: 99px; border: 1px solid var(--line); background: var(--bg); color: var(--fg); cursor: pointer; }
+.chip:hover { border-color: var(--accent); }
+.chip[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--accent-fg); }
+.chip small { opacity: .75; margin-left: 4px; }
+
+.featured { margin-top: 22px; }
+.fhead { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin: 0 4px 12px; }
+.fhead h2 { font-family: var(--font-display); font-size: 22px; margin: 0; }
+.fhead a { font-size: 14px; font-weight: 600; text-decoration: none; }
+.fgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(255px, 1fr)); gap: 16px; }
+.fgrid .card:nth-child(n+5) { display: none; }
+.ad { margin: 20px 0; min-height: 90px; display: flex; align-items: center; justify-content: center; border: 1px dashed var(--line); border-radius: 10px; color: var(--muted); font-size: 12px; }
+.status { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 6px 16px; margin: 18px 4px 12px; color: var(--muted); font-size: 13px; }
+.status strong { color: var(--fg); font-size: 15px; }
+
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(255px, 1fr)); gap: 16px; }
+.card { display: flex; flex-direction: column; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; min-width: 0; box-shadow: var(--shadow); transition: transform .15s ease, box-shadow .15s ease; }
+.card:hover { transform: translateY(-3px); box-shadow: var(--shadow-up); }
+.thumb { position: relative; aspect-ratio: 16 / 10; background: linear-gradient(135deg, var(--soft), var(--bg)); display: flex; align-items: center; justify-content: center; color: var(--muted); font-size: 13px; overflow: hidden; }
+.thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.badge { position: absolute; top: 10px; left: 10px; font-size: 11px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; padding: 3px 9px; border-radius: 99px; box-shadow: 0 1px 3px rgba(0,0,0,.2); }
+.badge.gsa { color: var(--gsa); background: var(--gsa-bg); }
+.badge.ebay { color: var(--ebay); background: var(--ebay-bg); }
+.badge.dealer { color: var(--dealer); background: var(--dealer-bg); }
+.cat { position: absolute; bottom: 10px; left: 10px; font-size: 11.5px; font-weight: 600; padding: 3px 9px; border-radius: 8px; background: rgba(10,20,28,.72); color: #fff; }
+.body { padding: 13px 15px 15px; display: flex; flex-direction: column; gap: 5px; flex: 1; }
+.card h2 { font-family: var(--font-display); font-size: 17px; line-height: 1.25; margin: 0; overflow-wrap: anywhere; }
+.price { font-size: 22px; font-weight: 600; color: var(--accent); line-height: 1.2; }
+.price small { font-size: 12px; font-weight: 500; color: var(--muted); }
+.meta { color: var(--muted); font-size: 13px; display: flex; gap: 6px; align-items: baseline; }
+.meta b { color: var(--fg); font-weight: 600; }
+.soon { color: var(--hi); font-weight: 600; }
+.card a.view { margin-top: auto; padding-top: 0; }
+.card a.view span { display: block; margin-top: 8px; text-align: center; padding: 10px; border-radius: 10px; background: var(--accent); color: var(--accent-fg); font-weight: 600; font-size: 14px; text-decoration: none; }
+.card a.view:hover span { filter: brightness(1.1); }
+
+.skel { height: 330px; border-radius: 14px; background: linear-gradient(100deg, var(--surface) 30%, var(--soft) 50%, var(--surface) 70%); background-size: 200% 100%; animation: sh 1.3s linear infinite; border: 1px solid var(--line); }
+@keyframes sh { to { background-position: -200% 0; } }
+.empty { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 34px 20px; text-align: center; box-shadow: var(--shadow); }
+.empty h2 { font-family: var(--font-display); margin: 0 0 8px; font-size: 22px; }
+.empty p { margin: 0 auto 8px; max-width: 60ch; color: var(--muted); }
+.more { display: block; margin: 22px auto 0; padding: 11px 26px; font: inherit; font-weight: 600; background: var(--accent); color: var(--accent-fg); border: 0; border-radius: 10px; cursor: pointer; }
+
+.browse { margin-top: 34px; }
+.browse h2 { font-family: var(--font-display); font-size: 20px; margin: 0 0 10px; }
+.browse ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+.browse a { display: inline-block; padding: 7px 13px; border: 1px solid var(--line); border-radius: 99px; background: var(--surface); text-decoration: none; font-size: 14px; color: var(--fg); }
+.browse a:hover { border-color: var(--accent); }
+.about { margin-top: 34px; max-width: 80ch; }
+.about h2 { font-family: var(--font-display); font-size: 20px; margin: 0 0 8px; }
+.about p { color: var(--muted); margin: 0 0 10px; }
+.tools { margin-top: 34px; display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 12px; }
+.tools h2 { grid-column: 1 / -1; font-family: var(--font-display); font-size: 20px; margin: 0; }
+.tool { display: block; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; text-decoration: none; color: var(--fg); }
+.tool:hover { border-color: var(--accent); }
+.tool b { display: block; font-family: var(--font-display); font-size: 16px; }
+.tool span { color: var(--muted); font-size: 13px; }
+footer { margin-top: 28px; font-size: 12.5px; color: var(--muted); max-width: 90ch; }
+
+@media (max-width: 860px) { .row.r1 { grid-template-columns: 1fr 1fr; } .row.r1 .kw { grid-column: 1 / -1; } .row.r3 { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 640px) {
+  .sitebar nav { display: none; }
+  .sitebar { justify-content: center; padding: 14px; }
+  .sitebar .brand { margin: 0; font-size: 30px; gap: 14px; }
+  .sitebar .brand img { width: 64px; height: 64px; border-radius: 16px; }
+  .fgrid { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 12px; padding-bottom: 8px; margin: 0 -16px; padding-left: 16px; padding-right: 16px; }
+  .fgrid .card { flex: 0 0 78%; scroll-snap-align: start; }
+}
+@media (max-width: 480px) { .resetrow .btn { width: 100%; } .row.r1 { grid-template-columns: 1fr; } .hero { padding: 28px 18px 26px; } }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="sitebar">
+    <a class="brand" href="/"><img src="favicon.svg" alt="" width="50" height="50">Deal1Cars</a>
+    <nav aria-label="Main">
+      <a class="primary" href="/" aria-current="page">Auctions</a>
+      <span class="sep" aria-hidden="true"></span>
+      <a href="auto-loan-calculator.html">Loan Calculator</a>
+      <a href="tax-return.html">Tax Estimate</a>
+      <a href="scientific-calculator.html">Scientific</a>
+    </nav>
+  </div>
+
+  <section class="hero">
+    <h1>Find your next vehicle or boat at auction</h1>
+    <p>Thousands of Auto listings from around the web in one free and convenient location. Refreshed every hour, and every listing opens on the original site.</p>
+    <div class="pills" id="pills"><span>GSA Auctions</span><span>eBay Motors</span><span>Updated hourly</span></div>
+  </section>
+
+  <section class="featured" id="featured" aria-label="Ending soon" hidden>
+    <div class="fhead"><h2>Ending soon</h2><a href="#find">Search all listings &darr;</a></div>
+    <div class="fgrid" id="fgrid"></div>
+  </section>
+
+  <section class="panel" id="find" aria-label="Search listings">
+    <div class="row r1">
+      <div class="kw"><label for="q">Search</label><input id="q" type="search" placeholder="Make, model, year, keyword" autocomplete="off"></div>
+      <div><label for="zip">Near ZIP code</label><input id="zip" type="text" inputmode="numeric" maxlength="5" placeholder="e.g. 90210" autocomplete="postal-code"></div>
+      <div><label for="rad">Within</label><select id="rad"><option value="25">25 miles</option><option value="50">50 miles</option><option value="100" selected>100 miles</option><option value="250">250 miles</option><option value="500">500 miles</option></select></div>
+      <div><button class="btn" id="loc" type="button">Use my location</button></div>
+    </div>
+    <div class="area-note" id="areanote" aria-live="polite"></div>
+    <div class="chips" id="chips" role="group" aria-label="Type"></div>
+    <div class="row r3">
+      <div><label for="src">Source</label><select id="src"><option value="">All sources</option><option value="gsa">GSA Auctions</option><option value="ebay">eBay Motors</option><option value="dealer">Dealers (for sale)</option><option value="auction">Auctions only</option><option value="fixed">For sale only (Buy It Now, dealers)</option></select></div>
+      <div><label for="st">State</label><select id="st"><option value="">All states</option></select></div>
+      <div><label for="max">Max price</label><input id="max" type="number" min="0" step="500" inputmode="numeric" placeholder="No limit"></div>
+      <div><label for="sort">Sort by</label><select id="sort"><option value="end">Ending soonest</option><option value="near" id="optnear" hidden>Nearest first</option><option value="pl">Price: low to high</option><option value="ph">Price: high to low</option><option value="yr">Newest model year</option></select></div>
+    </div>
+    <div class="resetrow"><button class="btn" id="reset" type="button">Reset search &amp; refresh listings</button></div>
+  </section>
+
+  <!-- AD SPACE: top banner. Paste your ad code inside this div. -->
+  <div class="ad ad-top" id="ad-top" aria-label="Advertisement">Ad space</div>
+
+  <div class="status" id="status" aria-live="polite"><span id="count">Loading listings&hellip;</span><span id="updated"></span></div>
+  <noscript><p>Listings need JavaScript to display. Browse GSA vehicle auctions directly at <a href="https://gsaauctions.gov/">gsaauctions.gov</a>.</p></noscript>
+  <div id="out"><div class="grid"><div class="skel"></div><div class="skel"></div><div class="skel"></div></div></div>
+
+  <!-- AD SPACE: middle banner. Paste your ad code inside this div. -->
+  <div class="ad ad-mid" id="ad-mid" aria-label="Advertisement">Ad space</div>
+
+  <section class="browse" aria-label="Browse by type and state">
+    <h2>Browse by type and state</h2>
+    <ul><!--BROWSE-LINKS--><li><a href="/browse/government-surplus-trucks.html">Trucks</a></li><li><a href="/browse/government-surplus-suvs-and-vans.html">SUVs and vans</a></li><li><a href="/browse/government-surplus-cars-and-trucks.html">Cars and trucks</a></li><li><a href="/browse/boats-at-auction.html">Boats</a></li><li><a href="/browse/trailers-at-auction.html">Trailers</a></li><li><a href="/browse/motorcycles-and-atvs-at-auction.html">Motorcycles and ATVs</a></li><li><a href="/browse/rvs-and-motorhomes-at-auction.html">RVs and motorhomes</a></li><li><a href="/browse/heavy-equipment-at-auction.html">Heavy equipment</a></li><!--/BROWSE-LINKS--></ul>
+  </section>
+
+  <section class="tools" aria-label="Free tools">
+    <h2>Free car tools</h2>
+    <a class="tool" href="auto-loan-calculator.html"><b>Auto Loan Calculator</b><span>Monthly payment, and how much car you can afford.</span></a>
+    <a class="tool" href="guides/how-to-buy-government-surplus-vehicle.html"><b>How to Buy a Surplus Vehicle</b><span>A step-by-step guide to bidding, paying and pickup.</span></a>
+    <a class="tool" href="guides/auction-fees-and-hidden-costs.html"><b>Auction Fees and Hidden Costs</b><span>What a winning bid really costs.</span></a>
+    <a class="tool" href="more-auction-sites.html"><b>More Auction Sites</b><span>Other places to find cars, boats and surplus.</span></a>
+    <a class="tool" href="tax-return.html"><b>2026 Tax Return Estimate</b><span>Estimate your federal refund or balance due.</span></a>
+    <a class="tool" href="scientific-calculator.html"><b>Scientific Calculator</b><span>Trig, logs, powers and more.</span></a>
+  </section>
+
+  <section class="about" aria-label="About Deal1Cars">
+    <h2>Government surplus and eBay Motors auctions, searchable in one place</h2>
+    <p>Deal1Cars gathers vehicle, boat and trailer auctions from <strong>GSA Auctions</strong>, the U.S. government's surplus sales site, and <strong>eBay Motors</strong>. Search by make, model, type, state, price, or distance from your ZIP code, then click through to the original listing to bid.</p>
+    <p>Government surplus vehicles are often sold by federal agencies after service and can include sedans, trucks, vans, buses, boats and trailers. Condition varies, so read each listing and inspect before you bid.</p>
+  </section>
+
+  <footer>
+    Deal1Cars is an independent site and is not affiliated with GSA, GSA Auctions or eBay. Listing details, prices and end times come from those sites and can change or be out of date, so always confirm on the original listing before you bid. Prices shown are the last bid or asking price seen at the latest update. Dealer "for sale" listings are fixed-price, not auctions, and come from a third-party data provider, so confirm price and availability with the dealer. Distances are approximate and measured from the center of each ZIP code. <span id="affnote" hidden>Some eBay links are affiliate links, which means this site may earn a commission if you buy, at no extra cost to you.</span><br>
+    <a href="privacy-policy.html">Privacy Policy</a>
+  </footer>
+</div>
+
+<script>
+(function () {
+  var PAGE = 24, shown = PAGE, all = [], me = null, geoSeq = 0;
+  var $ = function (id) { return document.getElementById(id); };
+  var out = $("out"), countEl = $("count");
+  var SRC = { gsa: "GSA Auctions", ebay: "eBay Motors", dealer: "For sale" };
+  var CATS = [["", "All"], ["vehicle", "Cars & trucks"], ["boat", "Boats & motors"], ["trailer", "Trailers"], ["motorcycle", "Motorcycles & ATVs"], ["rv", "RVs"], ["aircraft", "Aircraft"], ["equipment", "Equipment & mowers"]];
+  var CATNAME = {}; CATS.forEach(function (c) { CATNAME[c[0]] = c[1]; });
+  var cat = "";
+
+  function el(tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
+  function safeUrl(u) { return typeof u === "string" && /^https?:\/\//i.test(u) ? u : ""; }
+  function money(n) { return "$" + Math.round(n).toLocaleString("en-US"); }
+  function catOf(l) { return l.category || "vehicle"; }
+  function endDate(l) {
+    var s = l.endAt || l.endDate; if (!s) return null;
+    var d = new Date(l.endAt ? s : s + "T23:59:59"); return isNaN(d) ? null : d;
+  }
+  function endInfo(l) {
+    var d = endDate(l); if (!d) return { t: "End date not listed", soon: false };
+    var days = Math.ceil((d - new Date()) / 864e5);
+    var day = d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+    if (days <= 0) return { t: "Ends today", soon: true };
+    if (days === 1) return { t: "Ends tomorrow, " + day, soon: true };
+    if (days <= 3) return { t: days + " days left, " + day, soon: true };
+    return { t: "Ends " + day, soon: false };
+  }
+  function miles(a, b, c, d) {
+    var r = Math.PI / 180, x = (c - a) * r, y = (d - b) * r;
+    var h = Math.sin(x / 2) * Math.sin(x / 2) + Math.cos(a * r) * Math.cos(c * r) * Math.sin(y / 2) * Math.sin(y / 2);
+    return 3958.8 * 2 * Math.atan2(Math.sqrt(h), Math.sqrt(1 - h));
+  }
+
+  var ABBR = {"alabama":"AL","alaska":"AK","arizona":"AZ","arkansas":"AR","california":"CA","colorado":"CO","connecticut":"CT","delaware":"DE","district of columbia":"DC","washington dc":"DC","florida":"FL","georgia":"GA","hawaii":"HI","idaho":"ID","illinois":"IL","indiana":"IN","iowa":"IA","kansas":"KS","kentucky":"KY","louisiana":"LA","maine":"ME","maryland":"MD","massachusetts":"MA","michigan":"MI","minnesota":"MN","mississippi":"MS","missouri":"MO","montana":"MT","nebraska":"NE","nevada":"NV","new hampshire":"NH","new jersey":"NJ","new mexico":"NM","new york":"NY","north carolina":"NC","north dakota":"ND","ohio":"OH","oklahoma":"OK","oregon":"OR","pennsylvania":"PA","rhode island":"RI","south carolina":"SC","south dakota":"SD","tennessee":"TN","texas":"TX","utah":"UT","vermont":"VT","virginia":"VA","washington":"WA","west virginia":"WV","wisconsin":"WI","wyoming":"WY","puerto rico":"PR","guam":"GU"};
+  function normState(v) {
+    var t = String(v || "").replace(/[^A-Za-z ]/g, "").replace(/\s+/g, " ").trim();
+    if (/^[A-Za-z]{2}$/.test(t)) return t.toUpperCase();
+    return ABBR[t.toLowerCase()] || "";
+  }
+
+  function live(l) { var d = l.endAt ? new Date(l.endAt) : null; return !d || isNaN(d) || d.getTime() > Date.now(); }
+
+  function filtered() {
+    var q = $("q").value.trim().toLowerCase(), src = $("src").value, st = $("st").value;
+    var max = parseFloat($("max").value), rad = parseFloat($("rad").value), sort = $("sort").value;
+    var hidden = 0;
+    var rows = all.filter(function (l) {
+      if (!live(l)) return false;
+      if (cat && catOf(l) !== cat) return false;
+      if (src === "auction") { if (l.source === "dealer" || l.fixed) return false; }
+      else if (src === "fixed") { if (l.source !== "dealer" && !l.fixed) return false; }
+      else if (src && l.source !== src) return false;
+      if (st && l.state !== st) return false;
+      if (!isNaN(max) && l.price != null && l.price > max) return false;
+      if (q) {
+        var hay = (l.title + " " + (l.desc || "") + " " + (l.city || "") + " " + (l.state || "") + " " + (l.year || "")).toLowerCase();
+        if (!q.split(/\s+/).every(function (w) { return hay.indexOf(w) > -1; })) return false;
+      }
+      if (me) {
+        if (typeof l.lat !== "number" || typeof l.lon !== "number") { hidden++; return false; }
+        l._mi = miles(me.lat, me.lon, l.lat, l.lon);
+        if (l._mi > rad) return false;
+      } else l._mi = null;
+      return true;
+    });
+    rows.sort(function (a, b) {
+      if (sort === "near" && me) return a._mi - b._mi;
+      if (sort === "pl" || sort === "ph") {
+        var pa = a.price == null ? (sort === "pl" ? 1e12 : -1) : a.price, pb = b.price == null ? (sort === "pl" ? 1e12 : -1) : b.price;
+        return sort === "pl" ? pa - pb : pb - pa;
+      }
+      if (sort === "yr") return (b.year || 0) - (a.year || 0);
+      var da = endDate(a), db = endDate(b);
+      return (da ? da.getTime() : 9e15) - (db ? db.getTime() : 9e15);
+    });
+    return { rows: rows, hidden: hidden };
+  }
+
+  function drawChips() {
+    var counts = {}; all.forEach(function (l) { counts[catOf(l)] = (counts[catOf(l)] || 0) + 1; });
+    var box = $("chips"); box.textContent = "";
+    CATS.forEach(function (c) {
+      var n = c[0] === "" ? all.length : (counts[c[0]] || 0);
+      if (c[0] !== "" && !n) return;
+      var b = el("button", "chip", c[1]); b.type = "button"; b.setAttribute("aria-pressed", String(cat === c[0]));
+      b.appendChild(el("small", null, n.toLocaleString("en-US")));
+      b.onclick = function () { cat = c[0]; shown = PAGE; drawChips(); render(); };
+      box.appendChild(b);
+    });
+  }
+
+  function buildCard(l) {
+    {
+      var c = el("article", "card"), th = el("div", "thumb"), img = safeUrl(l.image);
+      if (img) {
+        var im = document.createElement("img"); im.loading = "lazy"; im.alt = l.title; im.referrerPolicy = "no-referrer"; im.src = img;
+        im.onerror = function () { im.remove(); th.insertBefore(document.createTextNode("No photo"), th.firstChild); };
+        th.appendChild(im);
+      } else th.appendChild(document.createTextNode("No photo"));
+      var fixedSale = l.source === "dealer" || !!l.fixed;
+      th.appendChild(el("span", "badge " + (fixedSale ? "dealer" : l.source === "ebay" ? "ebay" : "gsa"), l.fixed ? "eBay \u00b7 For sale" : (SRC[l.source] || l.source)));
+      th.appendChild(el("span", "cat", CATNAME[catOf(l)] || "Vehicle"));
+      c.appendChild(th);
+      var b = el("div", "body");
+      b.appendChild(el("h2", null, l.title));
+      var p = el("div", "price");
+      if (l.price != null) { p.appendChild(document.createTextNode(money(l.price) + " ")); p.appendChild(el("small", null, fixedSale ? (l.fixed ? "Buy It Now" : "asking price") : l.bids ? "current bid \u00b7 " + l.bids + " bid" + (l.bids === 1 ? "" : "s") : "current bid")); }
+      else p.appendChild(el("small", null, fixedSale ? "See listing for price" : "No bids yet"));
+      b.appendChild(p);
+      var loc = [l.city, l.state].filter(Boolean).join(", ");
+      if (loc || l._mi != null) {
+        var m = el("div", "meta"); m.appendChild(el("span", null, "\ud83d\udccd " + (loc || "Location listed on source")));
+        if (l._mi != null) m.appendChild(el("b", null, "\u00b7 " + Math.round(l._mi).toLocaleString("en-US") + " mi"));
+        b.appendChild(m);
+      }
+      if (fixedSale) b.appendChild(el("div", "meta", (l.miles ? l.miles.toLocaleString("en-US") + " miles \u00b7 " : "") + (l.fixed ? "Buy It Now, no end date" : "For sale")));
+      else { var e = endInfo(l); b.appendChild(el("div", "meta" + (e.soon ? " soon" : ""), e.t)); }
+      if (l.seller) b.appendChild(el("div", "meta", l.seller));
+      var a = el("a", "view"), u = safeUrl(l.url);
+      a.appendChild(el("span", null, (l.source === "dealer" ? "View dealer listing" : "View on " + (SRC[l.source] || "source site")) + " \u2197"));
+      if (u) { a.href = u; a.target = "_blank"; a.rel = "noopener noreferrer" + (l.source === "ebay" ? " sponsored" : ""); }
+      b.appendChild(a); c.appendChild(b);
+      return c;
+    }
+  }
+
+  function drawFeatured() {
+    var now = Date.now();
+    var live = all.filter(function (l) { var d = endDate(l); return l.source !== "dealer" && !l.fixed && safeUrl(l.url) && (!d || d.getTime() > now); });
+    live.sort(function (a, b) { var da = endDate(a), db = endDate(b); return (da ? da.getTime() : 9e15) - (db ? db.getTime() : 9e15); });
+    var withImg = live.filter(function (l) { return safeUrl(l.image); });
+    var pool = withImg.length >= 4 ? withImg : live, pick = [];
+    ["gsa", "ebay"].forEach(function (src) { pool.filter(function (l) { return l.source === src; }).slice(0, 2).forEach(function (l) { pick.push(l); }); });
+    pool.forEach(function (l) { if (pick.length < 4 && pick.indexOf(l) < 0) pick.push(l); });
+    if (!pick.length) return;
+    var g = $("fgrid"); g.textContent = "";
+    pick.slice(0, 4).forEach(function (l) { l._mi = null; g.appendChild(buildCard(l)); });
+    $("featured").hidden = false;
+  }
+
+  function render() {
+    out.textContent = "";
+    if (!all.length) return;
+    var f = filtered(), rows = f.rows;
+    var txt = rows.length.toLocaleString("en-US") + " listing" + (rows.length === 1 ? "" : "s");
+    countEl.textContent = "";
+    var s = el("strong", null, txt); countEl.appendChild(s);
+    if (me && f.hidden) countEl.appendChild(document.createTextNode("  (" + f.hidden + " more have no location data and are hidden)"));
+    if (!rows.length) {
+      var none = el("div", "empty");
+      none.appendChild(el("h2", null, "Nothing matches those filters"));
+      none.appendChild(el("p", null, me ? "Try a larger distance, a different type, or clear the ZIP code." : "Try a different search, clear the state or raise the price limit."));
+      out.appendChild(none); return;
+    }
+    var grid = el("div", "grid");
+    rows.slice(0, shown).forEach(function (l) { grid.appendChild(buildCard(l)); });
+    out.appendChild(grid);
+    if (rows.length > shown) {
+      var mb = el("button", "more", "Show more (" + (rows.length - shown) + " left)"); mb.type = "button";
+      mb.onclick = function () { shown += PAGE; render(); }; out.appendChild(mb);
+    }
+  }
+
+  /* ---- area search ---- */
+  function setNote(t, err) { var n = $("areanote"); n.textContent = t || ""; n.className = "area-note" + (err ? " err" : ""); }
+  function setMe(v, label) {
+    me = v; $("optnear").hidden = !v;
+    if (v) { $("sort").value = "near"; setNote("Showing listings within " + $("rad").value + " miles of " + label + "."); }
+    else { if ($("sort").value === "near") $("sort").value = "end"; }
+    shown = PAGE; render();
+  }
+  function onZip() {
+    var z = $("zip").value.trim();
+    if (!/^\d{5}$/.test(z)) { if (me) setMe(null); setNote(z ? "Enter a 5-digit US ZIP code." : "", !!z); return; }
+    var seq = ++geoSeq; setNote("Looking up " + z + "…");
+    fetch("https://api.zippopotam.us/us/" + z).then(function (r) { if (!r.ok) throw new Error("nf"); return r.json(); }).then(function (d) {
+      if (seq !== geoSeq) return;
+      var p = d.places && d.places[0], lat = parseFloat(p.latitude), lon = parseFloat(p["longitude"]);
+      if (isNaN(lat) || isNaN(lon)) throw new Error("bad");
+      setMe({ lat: lat, lon: lon }, p["place name"] + ", " + p["state abbreviation"] + " " + z);
+    }).catch(function (e) { if (seq !== geoSeq) return; setMe(null); setNote(e && e.message === "nf" ? "That ZIP code was not found." : "Couldn't look up that ZIP code right now. Try again, or filter by state instead.", true); });
+  }
+  function onLoc() {
+    if (!navigator.geolocation) { setNote("Your browser doesn't support location. Enter a ZIP code instead.", true); return; }
+    setNote("Asking your browser for your location…");
+    navigator.geolocation.getCurrentPosition(function (p) { geoSeq++; $("zip").value = ""; setMe({ lat: p.coords.latitude, lon: p.coords.longitude }, "your location"); },
+      function () { setNote("Location permission was denied. Enter a ZIP code instead.", true); }, { timeout: 10000 });
+  }
+
+  function showEmpty() {
+    countEl.textContent = "No listings loaded yet"; out.textContent = "";
+    var e = el("div", "empty");
+    e.appendChild(el("h2", null, "Listings are on the way"));
+    e.appendChild(el("p", null, "This page fills in automatically once the latest update has run. Check back soon, or try the calculators in the meantime."));
+    out.appendChild(e);
+  }
+
+  var bound = false;
+  function applyData(data) {
+    all = (data && Array.isArray(data.listings)) ? data.listings.filter(function (l) { return l && l.title && live(l); }) : [];
+    if (data && data.updated) { var d = new Date(data.updated); if (!isNaN(d)) $("updated").textContent = "Updated " + d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) + " " + d.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" }); }
+    if (data && data.affiliate) $("affnote").hidden = false;
+    all.forEach(function (l) { l.state = normState(l.state); });
+    if (!all.length) { showEmpty(); return false; }
+    var keep = $("st").value, states = {};
+    all.forEach(function (l) { if (l.state) states[l.state] = 1; });
+    $("st").length = 1;
+    Object.keys(states).sort().forEach(function (s) { var o = document.createElement("option"); o.value = s; o.textContent = s; $("st").appendChild(o); });
+    if (keep && states[keep]) $("st").value = keep;
+    return states;
+  }
+
+  function init(data) {
+    var states = applyData(data);
+    if (!states) return;
+    if (!bound) {
+      bound = true;
+      ["q", "max"].forEach(function (id) { $(id).addEventListener("input", function () { shown = PAGE; render(); }); });
+      ["src", "st", "sort"].forEach(function (id) { $(id).addEventListener("change", function () { shown = PAGE; render(); }); });
+      $("rad").addEventListener("change", function () { if (me) { setNote("Showing listings within " + $("rad").value + " miles."); } shown = PAGE; render(); });
+      $("zip").addEventListener("input", onZip);
+      $("loc").addEventListener("click", onLoc);
+      $("reset").addEventListener("click", onReset);
+      try {
+        var qs = new URLSearchParams(location.search);
+        if (qs.get("q")) $("q").value = qs.get("q").slice(0, 60);
+        var t = qs.get("type"); if (t && CATNAME[t]) cat = t;
+        var stq = (qs.get("state") || "").toUpperCase(); if (stq && states[stq]) $("st").value = stq;
+      } catch (e) {}
+    }
+    drawChips(); drawFeatured(); render();
+  }
+
+  function onReset() {
+    var btn = $("reset");
+    ["q", "zip", "max"].forEach(function (id) { $(id).value = ""; });
+    $("rad").value = "100"; $("src").value = ""; $("st").value = ""; $("sort").value = "end";
+    cat = ""; me = null; geoSeq++; shown = PAGE; $("optnear").hidden = true; setNote("");
+    try { history.replaceState(null, "", location.pathname); } catch (e) {}
+    btn.disabled = true; btn.textContent = "Refreshing\u2026";
+    fetch("listings.json?t=" + Date.now(), { cache: "no-store" }).then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); }).then(init)
+      .catch(function () { drawChips(); render(); })
+      .then(function () { btn.disabled = false; btn.textContent = "Reset search & refresh listings"; });
+  }
+
+  setInterval(function () { if (all.length) { drawChips(); render(); } }, 60000);
+  fetch("listings.json", { cache: "no-cache" }).then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); }).then(init).catch(function () {
+    countEl.textContent = "Listings could not be loaded"; out.textContent = "";
+    var e = el("div", "empty"); e.appendChild(el("h2", null, "Couldn't load listings")); e.appendChild(el("p", null, "Please refresh the page in a moment.")); out.appendChild(e);
+  });
+})();
+</script>
+</body>
+</html>
