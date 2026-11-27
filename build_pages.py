@@ -157,17 +157,17 @@ def card(l):
     thumb = ('<img src="%s" alt="%s" loading="lazy" referrerpolicy="no-referrer" width="400" height="250">' % (e(img), e(l.get("title")))
              if re.match(r"^https?://", img, re.I) else "No photo")
     price = l.get("price")
-    dealer = l.get("source") == "dealer"
+    dealer = l.get("source") == "dealer" or bool(l.get("fixed"))
     p = ("$%s <small>%s</small>" % (format(int(round(price)), ","), "asking price" if dealer else "current bid")) if price else "<small>No bids yet</small>"
     loc = ", ".join(x for x in (l.get("city"), l.get("state")) if x)
     end = l.get("endDate") or ""
     rel = "noopener noreferrer sponsored" if l.get("source") == "ebay" else "noopener noreferrer"
     return ('<li class="card"><div class="thumb">%s<span class="badge %s">%s</span></div><div class="body"><h2>%s</h2>'
             '<div class="price">%s</div>%s%s<a class="view" href="%s" target="_blank" rel="%s">View %s &#8599;</a></div></li>'
-            % (thumb, l.get("source") if l.get("source") in ("ebay", "dealer") else "gsa", e(SRC.get(l.get("source"), "Source")), e(l.get("title")), p,
+            % (thumb, "dealer" if dealer else (l.get("source") if l.get("source") == "ebay" else "gsa"), e("eBay &middot; For sale".replace("&middot;", "\u00b7") if l.get("fixed") else SRC.get(l.get("source"), "Source")), e(l.get("title")), p,
                ('<div class="meta">%s</div>' % e(loc)) if loc else "",
                ('<div class="meta">Ends %s</div>' % e(end)) if end and not dealer else ('<div class="meta">For sale</div>' if dealer else ""), e(url), rel,
-               "dealer listing" if dealer else e("on " + SRC.get(l.get("source"), "source site"))))
+               "dealer listing" if l.get("source") == "dealer" else e("on " + SRC.get(l.get("source"), "source site"))))
 
 
 def page(path, title, desc, h1, intro, rows, total, home_q, updated, extra_links, canonical_path, noindex):

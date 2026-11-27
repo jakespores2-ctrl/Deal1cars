@@ -25,6 +25,7 @@ import urllib.request
 OUT = os.environ.get("LISTINGS_FILE", "listings.json")
 GSA_URL = "https://api.gsa.gov/assets/gsaauctions/v2/auctions"
 MAX_PER_SOURCE = 5000
+EBAY_PAGES = int(os.environ.get("EBAY_PAGES", "4"))  # 50 listings per page, per search type
 
 MAKES = ("FORD CHEVROLET CHEVY DODGE JEEP TOYOTA HONDA NISSAN GMC RAM CHRYSLER BUICK CADILLAC LINCOLN HYUNDAI KIA SUBARU "
          "MAZDA VOLKSWAGEN VW BMW MERCEDES VOLVO AUDI LEXUS ACURA INFINITI MITSUBISHI PONTIAC SATURN MERCURY OLDSMOBILE TESLA "
@@ -196,7 +197,7 @@ def ebay_token(client_id, secret):
     return resp["access_token"]
 
 
-def transform_ebay(resp):
+def transform_ebay(resp, fixed=False):
     out = []
     for it in (resp or {}).get("itemSummaries") or []:
         title = (it.get("title") or "").strip()
@@ -216,8 +217,8 @@ def transform_ebay(resp):
             "year": int(year.group(1)) if year else None,
             "price": bid,
             "bids": int(to_number(it.get("bidCount")) or 0),
-            "endDate": (it.get("itemEndDate") or "")[:10] or None,
-            "endAt": it.get("itemEndDate") or None,
+            "endDate": None if fixed else (it.get("itemEndDate") or "")[:10] or None,
+            "endAt": None if fixed else (it.get("itemEndDate") or None),
             "zip": zip5(loc.get("postalCode")),
             "zip3": zip3(loc.get("postalCode")),
             "city": (loc.get("city") or "").strip(),
@@ -226,8 +227,11 @@ def transform_ebay(resp):
             "url": url,
             "desc": (it.get("shortDescription") or "")[:160],
             "seller": "",
-            "status": "A",
+            "status": "F" if fixed else "A",
         })
+        if fixed:
+            out[-1]["fixed"] = True
+            out[-1]["bids"] = 0
     return out
 
 
@@ -358,17 +362,30 @@ def fetch_ebay(client_id, secret, campaign):
     headers = {"Authorization": "Bearer " + token, "X-EBAY-C-MARKETPLACE-ID": "EBAY_MOTORS_US", "Accept": "application/json"}
     if campaign:
         headers["X-EBAY-C-ENDUSERCTX"] = "affiliateCampaignId=" + campaign
-    items = []
-    for offset in range(0, 200, 50):
-        params = urllib.parse.urlencode({"category_ids": "6001", "filter": "buyingOptions:{AUCTION}",
-                                         "sort": "endingSoonest", "limit": "50", "offset": str(offset)})
-        resp = http_json("https://api.ebay.com/buy/browse/v1/item_summary/search?" + params, headers)
-        if offset == 0:
-            log("eBay sample locations: %r" % [(it.get("itemLocation") or {}) for it in ((resp or {}).get("itemSummaries") or [])[:4]])
-        page = transform_ebay(resp)
-        items.extend(page)
-        if len((resp or {}).get("itemSummaries") or []) < 50:
-            break
+    items, seen = [], set()
+    # pass 1: auctions, pass 2: fixed-price "Buy It Now" cars
+    for buying, sort, fixed in (("AUCTION", "endingSoonest", False), ("FIXED_PRICE", "newlyListed", True)):
+        got = 0
+        for offset in range(0, 50 * EBAY_PAGES, 50):
+            params = urllib.parse.urlencode({"category_ids": "6001", "filter": "buyingOptions:{%s}" % buying,
+                                             "sort": sort, "limit": "50", "offset": str(offset)})
+            try:
+                resp = http_json("https://api.ebay.com/buy/browse/v1/item_summary/search?" + params, headers)
+            except Exception as e:
+                if not fixed:
+                    raise  # the auction pass is the main one
+                log("eBay Buy It Now search failed (auctions are unaffected): %s" % e)
+                break
+            if offset == 0 and not fixed:
+                log("eBay sample locations: %r" % [(it.get("itemLocation") or {}) for it in ((resp or {}).get("itemSummaries") or [])[:4]])
+            for rec in transform_ebay(resp, fixed):
+                if rec["id"] not in seen:  # an auction that also offers Buy It Now stays an auction
+                    seen.add(rec["id"])
+                    items.append(rec)
+                    got += 1
+            if len((resp or {}).get("itemSummaries") or []) < 50:
+                break
+        log("eBay %s: %d listings." % ("Buy It Now" if fixed else "auctions", got))
     return items[:MAX_PER_SOURCE]
 
 
