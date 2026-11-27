@@ -26,6 +26,7 @@ jobs:
           EBAY_CLIENT_ID: ${{ secrets.EBAY_CLIENT_ID }}
           EBAY_CLIENT_SECRET: ${{ secrets.EBAY_CLIENT_SECRET }}
           EBAY_CAMPAIGN_ID: ${{ secrets.EBAY_CAMPAIGN_ID }}
+          AUTODEV_API_KEY: ${{ secrets.AUTODEV_API_KEY }}
         run: python fetch_listings.py
       - name: Build landing pages
         run: python build_pages.py
