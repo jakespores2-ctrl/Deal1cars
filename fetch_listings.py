@@ -36,12 +36,12 @@ BODIES = ("SEDAN SUV PICKUP TRUCK VAN MINIVAN COUPE WAGON CROSSOVER HATCHBACK CO
 BAD = ("PARTS PART TIRE TIRES ENGINE ENGINES BATTERY BATTERIES WHEEL WHEELS SEAT SEATS SCRAP GENERATOR GENERATORS").split()
 CATS = [  # checked in this order; first match wins
     ("trailer", "TRAILER TRAILERS SEMITRAILER SEMI-TRAILER"),
-    ("boat", "BOAT BOATS VESSEL YACHT SAILBOAT PONTOON KAYAK CANOE WATERCRAFT SKIFF BARGE TUGBOAT FERRY HOVERCRAFT CATAMARAN DINGHY LAUNCH CUTTER RAFT JETSKI JET-SKI MARINE"),
+    ("boat", "BOAT BOATS VESSEL YACHT SAILBOAT PONTOON KAYAK KAYAKS CANOE CANOES WATERCRAFT SKIFF BARGE TUGBOAT FERRY HOVERCRAFT CATAMARAN DINGHY LAUNCH CUTTER RAFT JETSKI JET-SKI MARINE"),
     ("aircraft", "AIRCRAFT AIRPLANE HELICOPTER AIRPLANES CESSNA PIPER BEECHCRAFT"),
     ("rv", "RV MOTORHOME MOTOR-HOME CAMPER"),
-    ("motorcycle", "MOTORCYCLE MOTORCYCLES ATV UTV SCOOTER MOPED SNOWMOBILE GATOR SIDE-BY-SIDE CART"),
+    ("motorcycle", "MOTORCYCLE MOTORCYCLES ATV ATVS UTV UTVS SCOOTER MOPED SNOWMOBILE SNOWMOBILES GATOR SIDE-BY-SIDE CART SNOW-MOBILE SNOWCAT"),
 ]
-EQUIP = "TRACTOR BULLDOZER DOZER EXCAVATOR LOADER BACKHOE FORKLIFT GRADER CRANE SKID ROLLER SWEEPER PAVER"
+EQUIP = "TRACTOR BULLDOZER DOZER EXCAVATOR LOADER BACKHOE FORKLIFT GRADER CRANE SKID ROLLER SWEEPER PAVER MOWER MOWERS ZTR"
 
 def word_re(words):
     return re.compile(r"\b(?:" + "|".join(re.escape(w) for w in words) + r")\b")
@@ -116,7 +116,9 @@ def to_number(v):
 
 def classify(name, desc=""):
     """Return a category for vehicles, boats, trailers etc., or None to skip the lot."""
-    up = (name or "").upper()
+    up = (name or "").upper().replace("SNOW MOBILE", "SNOWMOBILE").replace("JET SKI", "JETSKI").replace("SIDE BY SIDE", "SIDE-BY-SIDE").replace("FOUR WHEELER", "ATV")
+    if re.search(r"\bOUTBOARDS?\b", up) and not re.search(r"\bPARTS?\b", up):
+        return "boat"  # outboard motors
     if not up or BAD_RE.search(up):
         return None
     for cat, rx in CAT_RES:
@@ -352,7 +354,8 @@ def fetch_gsa(api_key):
     log("GSA API returned %d auction lots in total." % len(results))
     if not results:
         log("Raw response (first 300 chars): %s" % json.dumps(resp)[:300])
-    for r in results[:15]:
+    for r in results[:5]:
+        r = lower_keys(r)
         log("  sample: %r | end %r | status %r" % ((r.get("itemname") or "")[:60], r.get("aucenddt"), r.get("auctionstatus")))
     return transform_gsa(results, datetime.datetime.now(datetime.timezone.utc).date())
 
