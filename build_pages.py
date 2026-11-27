@@ -185,10 +185,10 @@ def page(path, title, desc, h1, intro, rows, total, home_q, updated, extra_links
            '%s<style>%s</style></head><body><div class="wrap">%s'
            '<p class="crumbs"><a href="/">Auctions</a> &rsaquo; %s</p><h1>%s</h1>%s%s'
            '<!-- AD SPACE: top banner. Paste your ad code inside this div. --><div class="ad ad-top" aria-label="Advertisement">Ad space</div>'
-           '<p class="meta-line">%s listing%s &middot; %s</p>%s'
+           '<p class="meta-line">%s listing%s &middot; %s</p><p class="meta-line">Disclosure: some eBay links are affiliate links, so we may earn a commission if you buy, at no extra cost to you.</p>%s'
            '<!-- AD SPACE: bottom banner. Paste your ad code inside this div. --><div class="ad ad-bottom" aria-label="Advertisement">Ad space</div>'
            '<section class="links"><h2>More ways to browse</h2><ul>%s</ul></section>'
-           '<footer>Deal1Cars is an independent site and is not affiliated with GSA, GSA Auctions or eBay. Listing details, prices and end times come from those sites and can change, so confirm on the original listing before you bid. <a href="/privacy-policy.html">Privacy Policy</a></footer>'
+           '<footer>Deal1Cars is an independent site and is not affiliated with GSA, GSA Auctions or eBay. Listing details, prices and end times come from those sites and can change, so confirm on the original listing before you bid. <a href="/privacy-policy.html">Privacy Policy</a> &middot; <a href="/terms.html">Terms of Use</a></footer>'
            '<div class="mobnav"><a href="/">Auctions</a><a href="/auto-loan-calculator.html">Loan Calculator</a><a href="/tax-return.html">Tax Estimate</a><a href="/scientific-calculator.html">Scientific</a></div></div></body></html>') % (
         HEAD_LINKS, e(title), e(desc), SITE, canonical_path, '<meta name="robots" content="noindex">' if noindex else "",
         e(title), e(desc), SITE, canonical_path, "", CSS, BAR, e(h1.split(":")[0]), e(h1),
@@ -260,7 +260,7 @@ def main():
 
     # sitemap
     today = now.strftime("%Y-%m-%d")
-    fixed = ["/", "/auto-loan-calculator.html", "/more-auction-sites.html", "/guides/how-to-buy-government-surplus-vehicle.html", "/guides/auction-fees-and-hidden-costs.html", "/tax-return.html", "/scientific-calculator.html", "/privacy-policy.html"]
+    fixed = ["/", "/auto-loan-calculator.html", "/more-auction-sites.html", "/guides/how-to-buy-government-surplus-vehicle.html", "/guides/auction-fees-and-hidden-costs.html", "/tax-return.html", "/scientific-calculator.html", "/privacy-policy.html", "/terms.html"]
     urls = [(u, "1.0" if u == "/" else None) for u in fixed] + [(u, None) for u in written]
     xml = ['<?xml version="1.0" encoding="UTF-8"?>', '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
     for u, pr in urls:

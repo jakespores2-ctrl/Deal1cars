@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="favicon.ico" sizes="48x48">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="description" content="Terms for using Deal1Cars: listings come from other sites, details can change, and no warranty is given.">
+<title>Terms of Use</title>
+<link rel="canonical" href="https://deal1cars.com/terms.html">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Inter:wght@400;500;600&display=swap">
+<style>
+/* Layout: one readable column with a back button. Same look as the other pages. */
+:root {
+  --bg: #f1f4f6;
+  --surface: #ffffff;
+  --fg: #14202b;
+  --muted: #566878;
+  --line: #d8e0e6;
+  --accent: #0b6b63;
+  --font-display: "Bricolage Grotesque", "Helvetica Neue", Arial, sans-serif;
+  --font-body: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  color-scheme: light dark;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0e151b;
+    --surface: #161f27;
+    --fg: #e8eef3;
+    --muted: #94a5b4;
+    --line: #26333f;
+    --accent: #3fc1b2;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0e151b;
+  --surface: #161f27;
+  --fg: #e8eef3;
+  --muted: #94a5b4;
+  --line: #26333f;
+  --accent: #3fc1b2;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.65;
+  padding-block: 28px 56px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.wrap { max-width: 760px; margin: 0 auto; }
+a { color: var(--accent); }
+a.back { display: inline-block; font-size: 13.5px; font-weight: 600; text-decoration: none; color: var(--muted); border: 1px solid var(--line); border-radius: 8px; padding: 7px 12px; margin-bottom: 16px; }
+a.back:hover { color: var(--fg); border-color: var(--muted); }
+a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+h1 { font-family: var(--font-display); font-weight: 700; font-size: clamp(28px, 5vw, 40px); line-height: 1.1; margin: 0 0 6px; letter-spacing: -0.02em; }
+.updated { color: var(--muted); font-size: 14px; margin: 0 0 24px; }
+.doc { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 24px clamp(18px, 4vw, 32px); }
+h2 { font-family: var(--font-display); font-size: 20px; margin: 28px 0 8px; letter-spacing: -0.01em; }
+h2:first-child { margin-top: 0; }
+p { margin: 0 0 12px; }
+ul { margin: 0 0 12px; padding-left: 22px; }
+li { margin-bottom: 6px; }
+.todo { background: var(--bg); border: 1px dashed var(--muted); border-radius: 6px; padding: 1px 6px; }
+footer { margin-top: 24px; font-size: 13px; color: var(--muted); }
+</style>
+<style id="sitebar-css">
+.sitebar{display:flex;align-items:center;gap:6px 18px;flex-wrap:wrap;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:10px 14px;margin-bottom:20px;box-shadow:0 1px 2px rgba(20,32,43,.06),0 6px 18px rgba(20,32,43,.07)}
+.sitebar .brand{display:flex;align-items:center;gap:12px;font-family:var(--font-display);font-weight:700;font-size:24px;color:var(--fg);text-decoration:none;margin-right:auto}
+.sitebar .brand img{width:50px;height:50px;display:block;border-radius:12px}
+.sitebar nav{display:flex;flex-wrap:wrap;align-items:center;gap:4px}
+.sitebar nav a{text-decoration:none;font-size:14px;font-weight:500;color:var(--muted);padding:7px 11px;border-radius:8px}
+.sitebar nav a:hover{color:var(--fg);background:var(--bg)}
+.sitebar nav a.primary{background:var(--accent);color:var(--accent-fg,#fff);font-weight:600}
+.sitebar nav a[aria-current]:not(.primary){color:var(--fg);background:var(--bg)}
+.sitebar nav .sep{width:1px;height:20px;background:var(--line);margin:0 4px}
+@media(max-width:640px){.sitebar nav{display:none}.sitebar{justify-content:center;padding:14px}.sitebar .brand{margin:0;font-size:30px;gap:14px}.sitebar .brand img{width:64px;height:64px;border-radius:16px}.mobnav{display:flex!important}}
+.mobnav{display:none;flex-wrap:wrap;justify-content:center;gap:8px 16px;margin:26px 0 8px;font-size:14px}.mobnav a{color:var(--accent);font-weight:600;text-decoration:none}</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="sitebar">
+    <a class="brand" href="/"><img src="favicon.svg" alt="" width="50" height="50">Deal1Cars</a>
+    <nav aria-label="Main">
+      <a class="primary" href="/">Auctions</a>
+      <span class="sep" aria-hidden="true"></span>
+      <a href="auto-loan-calculator.html">Loan Calculator</a>
+      <a href="tax-return.html">Tax Estimate</a>
+      <a href="scientific-calculator.html">Scientific</a>
+    </nav>
+  </div>
+  <h1>Terms of Use</h1>
+  <p class="updated">Last updated: November 27, 2026</p>
+
+  <div class="doc">
+    <p>By using Deal1Cars (deal1cars.com), you agree to these terms. If you do not agree, please do not use the site.</p>
+
+    <h2>What this site is</h2>
+    <p>Deal1Cars is a free search and information site. It gathers listings from other websites, mainly GSA Auctions and eBay Motors, and links you to the original listing. We do not own, sell, inspect or ship any vehicle, boat or item shown, and we do not run any auction or accept bids or payments. Any purchase is a transaction between you and the seller or auction site.</p>
+
+    <h2>No affiliation</h2>
+    <p>Deal1Cars is independent. It is not affiliated with, endorsed by or sponsored by GSA, GSA Auctions, eBay or any seller. Names and trademarks belong to their owners and are used only to say where a listing comes from.</p>
+
+    <h2>Listings can be wrong or out of date</h2>
+    <p>Details, prices, photos, locations and end times are copied from third-party sources and refreshed about once an hour. They can change, contain errors, or be out of date, and a listing may have ended or sold. Always confirm every detail on the original listing, read the seller's and auction site's terms, and inspect an item before you bid or buy. Distances shown in area searches are approximate.</p>
+
+    <h2>No warranty and no advice</h2>
+    <p>The site and everything on it are provided "as is" and "as available," without promises of any kind, including accuracy, availability, condition, title or fitness for a purpose. Nothing here is financial, tax, legal or professional advice. The calculators give estimates only. Vehicle auctions often have fees, sell "as is," and may carry title or condition problems, so do your own research.</p>
+
+    <h2>Limit of liability</h2>
+    <p>To the fullest extent the law allows, Deal1Cars and its owner are not responsible for losses or damages arising from your use of the site or from any bid, purchase or transaction made through a link on it, including paying for an item that is not as described. Some places do not allow certain limits, so parts of this section may not apply to you.</p>
+
+    <h2>Affiliate links and advertising</h2>
+    <p>Some links are affiliate links, and the site may show ads. We may earn a commission or payment when you click or buy, at no extra cost to you. This does not change what we list. See the <a href="privacy-policy.html">Privacy Policy</a> for how cookies and tracking work.</p>
+
+    <h2>Acceptable use</h2>
+    <p>Please do not misuse the site. That includes trying to break or overload it, scraping it at a rate that harms it, or copying the site's design and text to pass off as your own. Listing data and photos belong to their original sources and are subject to those sources' terms.</p>
+
+    <h2>Changes</h2>
+    <p>We may change the site or these terms at any time. The date above shows the latest update. Continuing to use the site means you accept the current terms.</p>
+
+    <h2>Contact</h2>
+    <p>Questions or a listing you want removed? Email <a href="mailto:Deal1cars.com@protonmail.com">Deal1cars.com@protonmail.com</a>.</p>
+  </div>
+
+  <footer><a href="/">Vehicle Auctions</a> &middot; <a href="privacy-policy.html">Privacy Policy</a> &middot; <a href="auto-loan-calculator.html">Auto Loan Calculator</a></footer>
+</div>
+<div class="mobnav"><a href="/">Auctions</a><a href="/auto-loan-calculator.html">Loan Calculator</a><a href="/tax-return.html">Tax Estimate</a><a href="/scientific-calculator.html">Scientific</a></div>
+</body>
+</html>
