@@ -21,7 +21,7 @@
   --bg: #f1f4f6; --surface: #ffffff; --fg: #14202b; --muted: #566878; --line: #d8e0e6;
   --accent: #0b6b63; --accent-fg: #ffffff; --soft: #e1f0ee; --hi: #a8520a; --warn: #9a3412;
   --hero-a: #0a4f49; --hero-b: #0f766d; --hero-fg: #ffffff; --hero-muted: #cfe9e6;
-  --gsa: #1d4f91; --gsa-bg: #e3edf9; --ebay: #8a2b6b; --ebay-bg: #f8e6f1;
+  --dealer: #7a4a00; --dealer-bg: #fdf0d5; --gsa: #1d4f91; --gsa-bg: #e3edf9; --ebay: #8a2b6b; --ebay-bg: #f8e6f1;
   --shadow: 0 1px 2px rgba(20,32,43,.06), 0 6px 18px rgba(20,32,43,.07);
   --shadow-up: 0 2px 4px rgba(20,32,43,.08), 0 12px 28px rgba(20,32,43,.14);
   --font-display: "Bricolage Grotesque", "Helvetica Neue", Arial, sans-serif;
@@ -32,7 +32,7 @@
     --bg: #0e151b; --surface: #161f27; --fg: #e8eef3; --muted: #94a5b4; --line: #26333f;
     --accent: #3fc1b2; --accent-fg: #05201d; --soft: #13302e; --hi: #f0a24a; --warn: #f59e6b;
     --hero-a: #0b2e2b; --hero-b: #114b46; --hero-fg: #f2fbfa; --hero-muted: #a8cfca;
-    --gsa: #8db8f0; --gsa-bg: #162a45; --ebay: #eba4d2; --ebay-bg: #3a1830;
+    --dealer: #f0c46a; --dealer-bg: #3a2a0a; --gsa: #8db8f0; --gsa-bg: #162a45; --ebay: #eba4d2; --ebay-bg: #3a1830;
     --shadow: 0 1px 2px rgba(0,0,0,.4), 0 6px 18px rgba(0,0,0,.3); --shadow-up: 0 2px 4px rgba(0,0,0,.5), 0 12px 28px rgba(0,0,0,.45);
     color-scheme: dark;
   }
@@ -41,7 +41,7 @@
   --bg: #0e151b; --surface: #161f27; --fg: #e8eef3; --muted: #94a5b4; --line: #26333f;
   --accent: #3fc1b2; --accent-fg: #05201d; --soft: #13302e; --hi: #f0a24a; --warn: #f59e6b;
   --hero-a: #0b2e2b; --hero-b: #114b46; --hero-fg: #f2fbfa; --hero-muted: #a8cfca;
-  --gsa: #8db8f0; --gsa-bg: #162a45; --ebay: #eba4d2; --ebay-bg: #3a1830;
+  --dealer: #f0c46a; --dealer-bg: #3a2a0a; --gsa: #8db8f0; --gsa-bg: #162a45; --ebay: #eba4d2; --ebay-bg: #3a1830;
   --shadow: 0 1px 2px rgba(0,0,0,.4), 0 6px 18px rgba(0,0,0,.3); --shadow-up: 0 2px 4px rgba(0,0,0,.5), 0 12px 28px rgba(0,0,0,.45);
   color-scheme: dark;
 }
@@ -108,6 +108,7 @@ a { color: var(--accent); }
 .badge { position: absolute; top: 10px; left: 10px; font-size: 11px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; padding: 3px 9px; border-radius: 99px; box-shadow: 0 1px 3px rgba(0,0,0,.2); }
 .badge.gsa { color: var(--gsa); background: var(--gsa-bg); }
 .badge.ebay { color: var(--ebay); background: var(--ebay-bg); }
+.badge.dealer { color: var(--dealer); background: var(--dealer-bg); }
 .cat { position: absolute; bottom: 10px; left: 10px; font-size: 11.5px; font-weight: 600; padding: 3px 9px; border-radius: 8px; background: rgba(10,20,28,.72); color: #fff; }
 .body { padding: 13px 15px 15px; display: flex; flex-direction: column; gap: 5px; flex: 1; }
 .card h2 { font-family: var(--font-display); font-size: 17px; line-height: 1.25; margin: 0; overflow-wrap: anywhere; }
@@ -190,7 +191,7 @@ footer { margin-top: 28px; font-size: 12.5px; color: var(--muted); max-width: 90
     <div class="area-note" id="areanote" aria-live="polite"></div>
     <div class="chips" id="chips" role="group" aria-label="Type"></div>
     <div class="row r3">
-      <div><label for="src">Source</label><select id="src"><option value="">All sources</option><option value="gsa">GSA Auctions</option><option value="ebay">eBay Motors</option></select></div>
+      <div><label for="src">Source</label><select id="src"><option value="">All sources</option><option value="gsa">GSA Auctions</option><option value="ebay">eBay Motors</option><option value="dealer">Dealers (for sale)</option></select></div>
       <div><label for="st">State</label><select id="st"><option value="">All states</option></select></div>
       <div><label for="max">Max price</label><input id="max" type="number" min="0" step="500" inputmode="numeric" placeholder="No limit"></div>
       <div><label for="sort">Sort by</label><select id="sort"><option value="end">Ending soonest</option><option value="near" id="optnear" hidden>Nearest first</option><option value="pl">Price: low to high</option><option value="ph">Price: high to low</option><option value="yr">Newest model year</option></select></div>
@@ -210,7 +211,7 @@ footer { margin-top: 28px; font-size: 12.5px; color: var(--muted); max-width: 90
 
   <section class="browse" aria-label="Browse by type and state">
     <h2>Browse by type and state</h2>
-    <ul><!--BROWSE-LINKS--><li><a href="/browse/government-surplus-trucks.html">Government Surplus Trucks</a></li><li><a href="/browse/government-surplus-suvs-and-vans.html">Government Surplus SUVs and Vans</a></li><li><a href="/browse/government-surplus-cars-and-trucks.html">Government Surplus Cars and Trucks</a></li><li><a href="/browse/boats-at-auction.html">Boats</a></li><li><a href="/browse/trailers-at-auction.html">Trailers</a></li><li><a href="/browse/motorcycles-and-atvs-at-auction.html">Motorcycles, ATVs and UTVs</a></li><li><a href="/browse/rvs-and-motorhomes-at-auction.html">RVs and Motorhomes</a></li><li><a href="/browse/heavy-equipment-at-auction.html">Heavy Equipment</a></li><li><a href="/browse/government-surplus-vehicles-alabama.html">Alabama (7)</a></li><li><a href="/browse/government-surplus-vehicles-arizona.html">Arizona (11)</a></li><li><a href="/browse/government-surplus-vehicles-arkansas.html">Arkansas (4)</a></li><li><a href="/browse/government-surplus-vehicles-california.html">California (27)</a></li><li><a href="/browse/government-surplus-vehicles-colorado.html">Colorado (9)</a></li><li><a href="/browse/government-surplus-vehicles-florida.html">Florida (17)</a></li><li><a href="/browse/government-surplus-vehicles-georgia.html">Georgia (10)</a></li><li><a href="/browse/government-surplus-vehicles-illinois.html">Illinois (21)</a></li><li><a href="/browse/government-surplus-vehicles-kansas.html">Kansas (8)</a></li><li><a href="/browse/government-surplus-vehicles-maine.html">Maine (7)</a></li><li><a href="/browse/government-surplus-vehicles-maryland.html">Maryland (3)</a></li><li><a href="/browse/government-surplus-vehicles-michigan.html">Michigan (20)</a></li><li><a href="/browse/government-surplus-vehicles-mississippi.html">Mississippi (10)</a></li><li><a href="/browse/government-surplus-vehicles-missouri.html">Missouri (5)</a></li><li><a href="/browse/government-surplus-vehicles-montana.html">Montana (3)</a></li><li><a href="/browse/government-surplus-vehicles-nevada.html">Nevada (11)</a></li><li><a href="/browse/government-surplus-vehicles-new-jersey.html">New Jersey (10)</a></li><li><a href="/browse/government-surplus-vehicles-new-mexico.html">New Mexico (5)</a></li><li><a href="/browse/government-surplus-vehicles-north-carolina.html">North Carolina (55)</a></li><li><a href="/browse/government-surplus-vehicles-ohio.html">Ohio (3)</a></li><li><a href="/browse/government-surplus-vehicles-oklahoma.html">Oklahoma (6)</a></li><li><a href="/browse/government-surplus-vehicles-oregon.html">Oregon (6)</a></li><li><a href="/browse/government-surplus-vehicles-pennsylvania.html">Pennsylvania (10)</a></li><li><a href="/browse/government-surplus-vehicles-puerto-rico.html">Puerto Rico (3)</a></li><li><a href="/browse/government-surplus-vehicles-south-carolina.html">South Carolina (6)</a></li><li><a href="/browse/government-surplus-vehicles-south-dakota.html">South Dakota (4)</a></li><li><a href="/browse/government-surplus-vehicles-tennessee.html">Tennessee (10)</a></li><li><a href="/browse/government-surplus-vehicles-texas.html">Texas (23)</a></li><li><a href="/browse/government-surplus-vehicles-utah.html">Utah (17)</a></li><li><a href="/browse/government-surplus-vehicles-virginia.html">Virginia (12)</a></li><li><a href="/browse/government-surplus-vehicles-washington.html">Washington (11)</a></li><li><a href="/browse/government-surplus-vehicles-wisconsin.html">Wisconsin (17)</a></li><!--/BROWSE-LINKS--></ul>
+    <ul><!--BROWSE-LINKS--><li><a href="/browse/government-surplus-trucks.html">Trucks</a></li><li><a href="/browse/government-surplus-suvs-and-vans.html">SUVs and vans</a></li><li><a href="/browse/government-surplus-cars-and-trucks.html">Cars and trucks</a></li><li><a href="/browse/boats-at-auction.html">Boats</a></li><li><a href="/browse/trailers-at-auction.html">Trailers</a></li><li><a href="/browse/motorcycles-and-atvs-at-auction.html">Motorcycles and ATVs</a></li><li><a href="/browse/rvs-and-motorhomes-at-auction.html">RVs and motorhomes</a></li><li><a href="/browse/heavy-equipment-at-auction.html">Heavy equipment</a></li><!--/BROWSE-LINKS--></ul>
   </section>
 
   <section class="tools" aria-label="Free tools">
@@ -230,7 +231,7 @@ footer { margin-top: 28px; font-size: 12.5px; color: var(--muted); max-width: 90
   </section>
 
   <footer>
-    Deal1Cars is an independent site and is not affiliated with GSA, GSA Auctions or eBay. Listing details, prices and end times come from those sites and can change or be out of date, so always confirm on the original listing before you bid. Prices shown are the last bid seen at the latest update. Distances are approximate and measured from the center of each ZIP code. <span id="affnote" hidden>Some eBay links are affiliate links, which means this site may earn a commission if you buy, at no extra cost to you.</span><br>
+    Deal1Cars is an independent site and is not affiliated with GSA, GSA Auctions or eBay. Listing details, prices and end times come from those sites and can change or be out of date, so always confirm on the original listing before you bid. Prices shown are the last bid or asking price seen at the latest update. Dealer "for sale" listings are fixed-price, not auctions, and come from a third-party data provider, so confirm price and availability with the dealer. Distances are approximate and measured from the center of each ZIP code. <span id="affnote" hidden>Some eBay links are affiliate links, which means this site may earn a commission if you buy, at no extra cost to you.</span><br>
     <a href="privacy-policy.html">Privacy Policy</a>
   </footer>
 </div>
@@ -240,7 +241,7 @@ footer { margin-top: 28px; font-size: 12.5px; color: var(--muted); max-width: 90
   var PAGE = 24, shown = PAGE, all = [], me = null, geoSeq = 0;
   var $ = function (id) { return document.getElementById(id); };
   var out = $("out"), countEl = $("count");
-  var SRC = { gsa: "GSA Auctions", ebay: "eBay Motors" };
+  var SRC = { gsa: "GSA Auctions", ebay: "eBay Motors", dealer: "For sale" };
   var CATS = [["", "All"], ["vehicle", "Cars & trucks"], ["boat", "Boats"], ["trailer", "Trailers"], ["motorcycle", "Motorcycles & ATVs"], ["rv", "RVs"], ["aircraft", "Aircraft"], ["equipment", "Heavy equipment"]];
   var CATNAME = {}; CATS.forEach(function (c) { CATNAME[c[0]] = c[1]; });
   var cat = "";
@@ -332,14 +333,14 @@ footer { margin-top: 28px; font-size: 12.5px; color: var(--muted); max-width: 90
         im.onerror = function () { im.remove(); th.insertBefore(document.createTextNode("No photo"), th.firstChild); };
         th.appendChild(im);
       } else th.appendChild(document.createTextNode("No photo"));
-      th.appendChild(el("span", "badge " + (l.source === "ebay" ? "ebay" : "gsa"), SRC[l.source] || l.source));
+      th.appendChild(el("span", "badge " + (l.source === "ebay" ? "ebay" : l.source === "dealer" ? "dealer" : "gsa"), SRC[l.source] || l.source));
       th.appendChild(el("span", "cat", CATNAME[catOf(l)] || "Vehicle"));
       c.appendChild(th);
       var b = el("div", "body");
       b.appendChild(el("h2", null, l.title));
       var p = el("div", "price");
-      if (l.price != null) { p.appendChild(document.createTextNode(money(l.price) + " ")); p.appendChild(el("small", null, l.bids ? "current bid \u00b7 " + l.bids + " bid" + (l.bids === 1 ? "" : "s") : "current bid")); }
-      else p.appendChild(el("small", null, "No bids yet"));
+      if (l.price != null) { p.appendChild(document.createTextNode(money(l.price) + " ")); p.appendChild(el("small", null, l.source === "dealer" ? "asking price" : l.bids ? "current bid \u00b7 " + l.bids + " bid" + (l.bids === 1 ? "" : "s") : "current bid")); }
+      else p.appendChild(el("small", null, l.source === "dealer" ? "Call for price" : "No bids yet"));
       b.appendChild(p);
       var loc = [l.city, l.state].filter(Boolean).join(", ");
       if (loc || l._mi != null) {
@@ -347,10 +348,11 @@ footer { margin-top: 28px; font-size: 12.5px; color: var(--muted); max-width: 90
         if (l._mi != null) m.appendChild(el("b", null, "\u00b7 " + Math.round(l._mi).toLocaleString("en-US") + " mi"));
         b.appendChild(m);
       }
-      var e = endInfo(l); b.appendChild(el("div", "meta" + (e.soon ? " soon" : ""), e.t));
+      if (l.source === "dealer") b.appendChild(el("div", "meta", (l.miles ? l.miles.toLocaleString("en-US") + " miles \u00b7 " : "") + "For sale"));
+      else { var e = endInfo(l); b.appendChild(el("div", "meta" + (e.soon ? " soon" : ""), e.t)); }
       if (l.seller) b.appendChild(el("div", "meta", l.seller));
       var a = el("a", "view"), u = safeUrl(l.url);
-      a.appendChild(el("span", null, "View on " + (SRC[l.source] || "source site") + " \u2197"));
+      a.appendChild(el("span", null, (l.source === "dealer" ? "View dealer listing" : "View on " + (SRC[l.source] || "source site")) + " \u2197"));
       if (u) { a.href = u; a.target = "_blank"; a.rel = "noopener noreferrer" + (l.source === "ebay" ? " sponsored" : ""); }
       b.appendChild(a); c.appendChild(b);
       return c;
@@ -359,7 +361,7 @@ footer { margin-top: 28px; font-size: 12.5px; color: var(--muted); max-width: 90
 
   function drawFeatured() {
     var now = Date.now();
-    var live = all.filter(function (l) { var d = endDate(l); return safeUrl(l.url) && (!d || d.getTime() > now); });
+    var live = all.filter(function (l) { var d = endDate(l); return l.source !== "dealer" && safeUrl(l.url) && (!d || d.getTime() > now); });
     live.sort(function (a, b) { var da = endDate(a), db = endDate(b); return (da ? da.getTime() : 9e15) - (db ? db.getTime() : 9e15); });
     var withImg = live.filter(function (l) { return safeUrl(l.image); });
     var pool = withImg.length >= 4 ? withImg : live, pick = [];

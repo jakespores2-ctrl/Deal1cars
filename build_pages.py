@@ -96,7 +96,7 @@ h1{font-family:var(--font-display);font-size:clamp(26px,4.5vw,40px);line-height:
 .thumb{position:relative;aspect-ratio:16/10;background:linear-gradient(135deg,var(--soft),var(--bg));display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:13px;overflow:hidden}
 .thumb img{width:100%;height:100%;object-fit:cover;display:block}
 .badge{position:absolute;top:10px;left:10px;font-size:11px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;padding:3px 9px;border-radius:99px}
-.badge.gsa{color:var(--gsa);background:var(--gsa-bg)}.badge.ebay{color:var(--ebay);background:var(--ebay-bg)}
+.badge.gsa{color:var(--gsa);background:var(--gsa-bg)}.badge.ebay{color:var(--ebay);background:var(--ebay-bg)}.badge.dealer{color:#7a4a00;background:#fdf0d5}
 .body{padding:13px 15px 15px;display:flex;flex-direction:column;gap:5px;flex:1}
 .card h2{font-family:var(--font-display);font-size:17px;line-height:1.25;margin:0;overflow-wrap:anywhere}
 .price{font-size:21px;font-weight:600;color:var(--accent)}.price small{font-size:12px;font-weight:500;color:var(--muted)}
@@ -121,7 +121,7 @@ BAR = ('<div class="sitebar"><a class="brand" href="/"><img src="/favicon.svg" a
        '<a href="/auto-loan-calculator.html">Loan Calculator</a><a href="/tax-return.html">Tax Estimate</a>'
        '<a href="/scientific-calculator.html">Scientific</a></nav></div>')
 
-SRC = {"gsa": "GSA Auctions", "ebay": "eBay Motors"}
+SRC = {"gsa": "GSA Auctions", "ebay": "eBay Motors", "dealer": "For sale"}
 
 
 def e(s):
@@ -157,15 +157,17 @@ def card(l):
     thumb = ('<img src="%s" alt="%s" loading="lazy" referrerpolicy="no-referrer" width="400" height="250">' % (e(img), e(l.get("title")))
              if re.match(r"^https?://", img, re.I) else "No photo")
     price = l.get("price")
-    p = ("$%s <small>current bid</small>" % format(int(round(price)), ",")) if price else "<small>No bids yet</small>"
+    dealer = l.get("source") == "dealer"
+    p = ("$%s <small>%s</small>" % (format(int(round(price)), ","), "asking price" if dealer else "current bid")) if price else "<small>No bids yet</small>"
     loc = ", ".join(x for x in (l.get("city"), l.get("state")) if x)
     end = l.get("endDate") or ""
     rel = "noopener noreferrer sponsored" if l.get("source") == "ebay" else "noopener noreferrer"
     return ('<li class="card"><div class="thumb">%s<span class="badge %s">%s</span></div><div class="body"><h2>%s</h2>'
-            '<div class="price">%s</div>%s%s<a class="view" href="%s" target="_blank" rel="%s">View on %s &#8599;</a></div></li>'
-            % (thumb, "ebay" if l.get("source") == "ebay" else "gsa", e(SRC.get(l.get("source"), "Source")), e(l.get("title")), p,
+            '<div class="price">%s</div>%s%s<a class="view" href="%s" target="_blank" rel="%s">View %s &#8599;</a></div></li>'
+            % (thumb, l.get("source") if l.get("source") in ("ebay", "dealer") else "gsa", e(SRC.get(l.get("source"), "Source")), e(l.get("title")), p,
                ('<div class="meta">%s</div>' % e(loc)) if loc else "",
-               ('<div class="meta">Ends %s</div>' % e(end)) if end else "", e(url), rel, e(SRC.get(l.get("source"), "source site"))))
+               ('<div class="meta">Ends %s</div>' % e(end)) if end and not dealer else ('<div class="meta">For sale</div>' if dealer else ""), e(url), rel,
+               "dealer listing" if dealer else e("on " + SRC.get(l.get("source"), "source site"))))
 
 
 def page(path, title, desc, h1, intro, rows, total, home_q, updated, extra_links, canonical_path, noindex):

@@ -9,6 +9,7 @@ Secrets (set in the repo under Settings > Secrets and variables > Actions):
   EBAY_CLIENT_ID      eBay developer keyset, production                 (optional)
   EBAY_CLIENT_SECRET  eBay developer keyset, production                 (optional)
   EBAY_CAMPAIGN_ID    eBay Partner Network campaign id for commissions  (optional)
+  AUTODEV_API_KEY     Auto.dev key for dealer "for sale" listings         (optional)
 """
 import base64
 import datetime
@@ -230,6 +231,116 @@ def transform_ebay(resp):
     return out
 
 
+AUTODEV_URL = "https://api.auto.dev/listings"
+AUTODEV_LIMIT = int(os.environ.get("AUTODEV_LIMIT", "20"))          # free plan caps each call at 20 listings
+AUTODEV_MAX_CALLS = int(os.environ.get("AUTODEV_MAX_CALLS", "25"))  # calls per refresh
+AUTODEV_MIN_HOURS = float(os.environ.get("AUTODEV_MIN_HOURS", "22"))  # refresh at most about once a day (free plan: 1,000 calls/month)
+
+
+def flat(d, prefix=""):
+    out = {}
+    if isinstance(d, dict):
+        for k, v in d.items():
+            key = prefix + str(k)
+            if isinstance(v, dict):
+                out.update(flat(v, key + "."))
+            else:
+                out[key] = v
+    return out
+
+
+def pick(f, *names):
+    """First non-empty value whose key equals, or ends with '.', one of the names (case-insensitive)."""
+    low = {k.lower(): v for k, v in f.items()}
+    for n in names:
+        n = n.lower()
+        for k, v in low.items():
+            if (k == n or k.endswith("." + n)) and v not in (None, "", [], {}):
+                return v
+    return None
+
+
+def first_url(v):
+    if isinstance(v, str):
+        return v
+    if isinstance(v, list) and v:
+        return first_url(v[0])
+    if isinstance(v, dict):
+        return first_url(v.get("url") or v.get("src") or v.get("href"))
+    return ""
+
+
+def transform_autodev(items):
+    out, seen = [], set()
+    for it in items or []:
+        f = flat(it)
+        vin = str(pick(f, "vin") or "").strip()
+        year, make, model, trim = pick(f, "year"), pick(f, "make"), pick(f, "model"), pick(f, "trim")
+        title = " ".join(str(x) for x in (year, make, model, trim) if x)
+        price = to_number(pick(f, "price"))
+        url = first_url(pick(f, "vdp", "vdpUrl", "listingUrl", "url"))
+        if not title or not price or not url.lower().startswith("http"):
+            continue
+        key = vin or url
+        if key in seen:
+            continue
+        seen.add(key)
+        loc = pick(f, "location")
+        lat, lon = to_number(pick(f, "lat", "latitude")), to_number(pick(f, "lon", "lng", "longitude"))
+        if lat is None and isinstance(loc, (list, tuple)) and len(loc) == 2:  # GeoJSON order is [lon, lat]
+            lon, lat = to_number(loc[0]), to_number(loc[1])
+        elif lat is None and isinstance(loc, str) and "," in loc:
+            a, b = loc.split(",", 1)
+            lat, lon = to_number(a), to_number(b)
+        image = first_url(pick(f, "primaryImage", "primaryPhoto", "photoUrl", "image", "photos", "images"))
+        yr = to_number(year)
+        rec = {
+            "id": "dealer-" + key,
+            "source": "dealer",
+            "category": "vehicle",
+            "title": title,
+            "year": int(yr) if yr else None,
+            "price": price,
+            "bids": 0,
+            "endDate": None,
+            "endAt": None,
+            "zip": zip5(pick(f, "zip", "zipcode", "postalCode")),
+            "city": str(pick(f, "city") or "").strip(),
+            "state": norm_state(pick(f, "state")),
+            "image": image if image.lower().startswith("http") else "",
+            "url": url,
+            "desc": "",
+            "seller": str(pick(f, "dealer.name", "dealerName", "dealer") if not isinstance(pick(f, "dealer"), dict) else "").strip()[:60],
+            "status": "F",
+        }
+        miles = to_number(pick(f, "miles", "mileage"))
+        if miles:
+            rec["miles"] = int(miles)
+        if lat is not None and lon is not None and -90 <= lat <= 90 and -180 <= lon <= 180:
+            rec["lat"], rec["lon"] = round(lat, 3), round(lon, 3)
+        out.append(rec)
+    return out
+
+
+def fetch_autodev(api_key):
+    headers = {"Authorization": "Bearer " + api_key, "Content-Type": "application/json", "Accept": "application/json"}
+    items, calls = [], 0
+    for page in range(1, AUTODEV_MAX_CALLS + 1):
+        params = urllib.parse.urlencode({"page": page, "limit": AUTODEV_LIMIT, "sort": "updatedAt.desc"})
+        resp = http_json(AUTODEV_URL + "?" + params, headers)
+        calls += 1
+        data = resp.get("data") if isinstance(resp, dict) else resp
+        data = data or []
+        if page == 1:
+            log("Auto.dev sample fields: %s" % sorted(flat(data[0]).keys())[:60] if data else "Auto.dev returned no listings on page 1.")
+        items.extend(data)
+        if len(data) < AUTODEV_LIMIT:
+            break
+    out = transform_autodev(items)
+    log("Auto.dev: %d raw listings, %d usable, %d calls." % (len(items), len(out), calls))
+    return out, calls
+
+
 def fetch_gsa(api_key):
     resp = http_json(GSA_URL, {"X-API-KEY": api_key, "Accept": "application/json"})
     results = resp if isinstance(resp, list) else (lower_keys(resp).get("results") or [])
@@ -396,6 +507,34 @@ def main():
             sources["ebay"] = {"ok": False, "count": len(old), "error": str(e)[:200]}
     else:
         log("EBAY_CLIENT_ID / EBAY_CLIENT_SECRET not set, skipping eBay.")
+
+    dk = os.environ.get("AUTODEV_API_KEY", "").strip()
+    if dk:
+        old = [x for x in prev_items if x.get("source") == "dealer"]
+        meta = (prev.get("sources") or {}).get("dealer") or {}
+        try:
+            last = datetime.datetime.fromisoformat(str(meta.get("fetchedAt", "")).replace("Z", "+00:00"))
+        except ValueError:
+            last = None
+        age_h = (datetime.datetime.now(datetime.timezone.utc) - last).total_seconds() / 3600 if last else 1e9
+        if old and meta.get("ok") and age_h < AUTODEV_MIN_HOURS:
+            listings.extend(old)
+            sources["dealer"] = dict(meta)
+            log("Auto.dev: reusing %d saved listings (refreshed %.1f hours ago, saving API calls)." % (len(old), age_h))
+        else:
+            try:
+                items, calls = fetch_autodev(dk)
+                if not items and old:
+                    raise RuntimeError("no usable listings returned")
+                listings.extend(items)
+                sources["dealer"] = {"ok": True, "count": len(items), "calls": calls,
+                                     "fetchedAt": datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")}
+            except Exception as e:
+                log("Auto.dev failed: %s" % e)
+                listings.extend(old)
+                sources["dealer"] = {"ok": False, "count": len(old), "error": str(e)[:200], "fetchedAt": meta.get("fetchedAt")}
+    else:
+        log("AUTODEV_API_KEY not set, skipping dealer listings.")
 
     if not sources:
         log("No sources configured. Leaving %s unchanged." % OUT)
